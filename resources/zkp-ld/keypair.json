@@ -1,0 +1,15 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://www.w3.org/ns/data-integrity/v1",
+    "https://w3id.org/security/multikey/v1"
+  ],
+  "id": "did:example:issuer0",
+  "verificationMethod": {
+    "id": "did:example:issuer0#bls12_381-g2-pub001",
+    "type": "Multikey",
+    "controller": "did:example:issuer0",
+    "secretKeyMultibase": "z4893E1L7AeYfqaduUdLYgcxefWAah8gJB8RhPi7JHQkdRbe",
+    "publicKeyMultibase": "zUC77BjGcGDVWfBdgzqwzp3uuWkoWuRMe8pnx4dkncia5t9LKHVt96BPGBizeSU7BKiV35h1tsuVwHUVt4arZuckxGCb2tTsB3fsY66mQNs5Bwoac2w2iyYFe8uenBUYdAiveEr"
+  }
+}

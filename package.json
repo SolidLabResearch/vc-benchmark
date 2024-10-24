@@ -11,9 +11,15 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/jsonld": "./@types/jsonld",
     "@types/node": "^22.7.9",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@zkp-ld/bls12381-key-pair": "^0.8.0",
+    "@zkp-ld/jsonld-proofs": "^0.14.0",
+    "jsonld": "^8.3.2"
   }
 }
