@@ -43,3 +43,5 @@ export const remoteDocumentLoader: DocumentLoader = async (
 
     return res;
 };
+
+export const defaultDocumentLoader = localDocumentLoader
