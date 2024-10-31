@@ -6,7 +6,15 @@ import {createDocumentLoader, defaultContexts, defaultDocumentLoader} from "./do
 import assert from "node:assert";
 import {Implementation_BbsBlsSignature2020} from "./suite-implementations/bbs-bls-signature-2020";
 import {IDidDocument, IRegistry, IVerificationMethod} from "./interfaces";
+import {performance} from "node:perf_hooks";
+import * as fs from "node:fs";
 
+export const MARKERS = {
+    START_SIGN_VC: 'START_SIGN_VC',
+    END_SIGN_VC: 'END_SIGN_VC',
+    START_VERIFY_VC: 'START_VERIFY_VC',
+    END_VERIFY_VC: 'END_VERIFY_VC',
+}
 namespace zkpld {
     const cryptosuite : string = 'bbs-termwise-signature-2023'
     export function redactControllerDoc(doc: any) {
@@ -14,19 +22,29 @@ namespace zkpld {
         delete redactedDoc.verificationMethod.secretKeyMultibase
         return redactedDoc
     }
+
     export async function main() {
         logv2(keypair, 'keypair')
         logv2(credential, 'credential')
         const documentLoader = defaultDocumentLoader;
 
+        const perfOptions = {
+            detail: {
+                implementation: 'zkpld'
+            }
+        }
         // Sign VC
+        performance.mark(MARKERS.START_SIGN_VC, perfOptions)
         const vc = await sign(credential, keypair, documentLoader)
+        performance.mark(MARKERS.END_SIGN_VC, perfOptions)
         logv2(vc, 'vc')
         assert(vc.proof.cryptosuite === cryptosuite)
 
         // Verify VC
         const publicKeypair = zkpld.redactControllerDoc(keypair)
+        performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
         const verificationResult = await verify(vc, [publicKeypair], documentLoader)
+        performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
         logv2(verificationResult, 'verificationResult')
         assert(verificationResult.verified === true)
     }
@@ -58,7 +76,11 @@ namespace bbsSignature2020 {
     }
     export async function main() {
         const r = new MyRegistry()
-
+        const perfOptions = {
+            detail: {
+                implementation: 'BbsBlsSignature2020'
+            }
+        }
         // Create issuer keypair
         const controller: string = 'did:example:test-bbs-signature-2020'
         const kp = await Implementation_BbsBlsSignature2020.createKeypair({
@@ -94,8 +116,13 @@ namespace bbsSignature2020 {
         // Preprocess VC
         const preprocessedCredential = Implementation_BbsBlsSignature2020.preprocessVC(credential)
         // Sign VC
+        performance.mark(MARKERS.START_SIGN_VC, perfOptions)
         const vc = await Implementation_BbsBlsSignature2020.sign(preprocessedCredential, kp, dl)
+        performance.mark(MARKERS.END_SIGN_VC, perfOptions)
+
+        performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
         const verificationResult = await Implementation_BbsBlsSignature2020.verify(vc, dl)
+        performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
         logv2(verificationResult, 'verificationResult')
         assert(verificationResult.verified === true)
     }
@@ -105,6 +132,11 @@ namespace bbsSignature2020 {
 
 }
 
-zkpld.main().then().catch(console.error)
-bbsSignature2020.main().then().catch(console.error)
+async function printPerformanceRecords() {
+    logv2(performance.getEntries(), 'performanceRecords')
+    fs.writeFileSync('performanceRecords.json', JSON.stringify(performance.getEntries()))
+
+}
+zkpld.main().then(printPerformanceRecords).catch(console.error)
+bbsSignature2020.main().then(printPerformanceRecords).catch(console.error)
 
