@@ -26,6 +26,8 @@
     "@zkp-ld/bls12381-key-pair": "^0.8.0",
     "@zkp-ld/jsonld-proofs": "^0.14.0",
     "jsonld": "^8.3.2",
-    "jsonld-signatures": "^11.3.1"
+    "jsonld-document-loader": "^2.2.0",
+    "jsonld-signatures": "^11.3.1",
+    "klona": "^2.0.6"
   }
 }

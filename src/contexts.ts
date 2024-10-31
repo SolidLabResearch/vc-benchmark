@@ -4,6 +4,9 @@ import didV1Context from './contexts/did-v1.json';
 import multikeyV1Context from './contexts/multikey-v1.json';
 import schemaOrgContext from './contexts/schemaorg.json';
 import zkpldContext from './contexts/zkp-ld.json';
+import bbsV1 from './contexts/bbs-v1.json'
+import jws2020 from './contexts/vc-jws-2020.json';
+
 
 export const DATA_INTEGRITY_CONTEXT = 'https://www.w3.org/ns/data-integrity/v1';
 
@@ -15,4 +18,7 @@ export const CONTEXTS: Record<string, any> = {
   'https://www.w3.org/ns/did/v1': didV1Context,
   'https://zkp-ld.org/context.jsonld': zkpldContext,
   [DATA_INTEGRITY_CONTEXT]: dataIntegrityContext,
+  'https://w3id.org/security/bbs/v1': bbsV1,
+  'https://w3id.org/security/suites/jws-2020/v1': jws2020
+
 };
