@@ -139,6 +139,11 @@ namespace ed25519Signature2020 {
   import MyRegistry = bbsSignature2020.MyRegistry;
 
   export async function main() {
+    const perfOptions = {
+      detail: {
+        implementation: 'Ed25519Signature2020'
+      }
+    }
     const r = new MyRegistry()
     const controller = 'did:example:test-ed25519-signature-2020'
     const seedString = 'super-secretive-seed-of-at-least-32-bytes'
@@ -168,15 +173,21 @@ namespace ed25519Signature2020 {
     // VC: preprocess
     const preprocessedCredential = Implementation_Ed25519Signature2020.preprocessVC(credential)
     // VC: sign
+    performance.mark(MARKERS.START_SIGN_VC, perfOptions)
     const vc = await Implementation_Ed25519Signature2020.sign(
         preprocessedCredential,
         kp,
         dl
     )
+    performance.mark(MARKERS.END_SIGN_VC, perfOptions)
+
     logv2(vc, 'vc')
 
     // VC: verify
+    performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await Implementation_Ed25519Signature2020.verify(vc, dl)
+    performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
+
     logv2(verificationResult, 'verificationResult')
 
 
@@ -188,6 +199,13 @@ async function printPerformanceRecords() {
 
 }
 
+const implementationRunners = [
+  zkpld,
+  bbsSignature2020,
+  ed25519Signature2020
+]
+Promise.all(implementationRunners.map(ir => ir.main()))
+  .then(printPerformanceRecords).catch(logv2)
 // zkpld.main().then(printPerformanceRecords).catch(logv2)
 // bbsSignature2020.main().then(printPerformanceRecords).catch(logv2)
-ed25519Signature2020.main().then().catch(logv2)
+// ed25519Signature2020.main().then().catch(logv2)
