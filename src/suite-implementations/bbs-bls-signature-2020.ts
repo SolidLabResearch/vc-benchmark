@@ -4,7 +4,7 @@ import {
     Bls12381G2KeyPair,
     deriveProof,
 } from "@mattrglobal/jsonld-signatures-bbs";
-import * as jsig from 'jsonld-signatures'
+import jsigs from 'jsonld-signatures';
 
 import {defaultDocumentLoader} from "../documentLoader";
 import {klona} from "klona";
@@ -77,17 +77,18 @@ export namespace Implementation_BbsBlsSignature2020 {
         const suite = _hack_addEnsureContextFunction(
             new BbsBlsSignature2020({key: keypair})
         )
-        return await jsig.sign(klona(credential), {
+        return await jsigs.sign(klona(credential), {
             suite,
             documentLoader,
-            purpose: new jsig.purposes.AssertionProofPurpose(),
+            purpose: new jsigs.purposes.AssertionProofPurpose(),
         })
     }
 
+
     export async function verify(vc: any, documentLoader: any) {
-        return await jsig.verify(vc, {
+        return await jsigs.verify(vc, {
             suite: new BbsBlsSignature2020(),
-            purpose: new jsig.purposes.AssertionProofPurpose(),
+            purpose: new jsigs.purposes.AssertionProofPurpose(),
             documentLoader,
         })
     }
