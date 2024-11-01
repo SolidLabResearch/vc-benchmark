@@ -32,7 +32,7 @@ namespace zkpld {
 
         const perfOptions = {
             detail: {
-                implementation: 'zkpld'
+                implementation: 'bbs-termwise-signature-2023'
             }
         }
         // Sign VC
