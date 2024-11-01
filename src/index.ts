@@ -5,9 +5,10 @@ import {sign, verify} from "@zkp-ld/jsonld-proofs";
 import {createDocumentLoader, defaultContexts, defaultDocumentLoader} from "./documentLoader";
 import assert from "node:assert";
 import {Implementation_BbsBlsSignature2020} from "./suite-implementations/bbs-bls-signature-2020";
-import {IDidDocument, IRegistry, IVerificationMethod} from "./interfaces";
+import {IRegistry, IVerificationMethod} from "./interfaces";
 import {performance} from "node:perf_hooks";
 import * as fs from "node:fs";
+import {Implementation_Ed25519Signature2020} from "./suite-implementations/ed255-signature-2020";
 
 export const MARKERS = {
     START_SIGN_VC: 'START_SIGN_VC',
@@ -15,6 +16,7 @@ export const MARKERS = {
     START_VERIFY_VC: 'START_VERIFY_VC',
     END_VERIFY_VC: 'END_VERIFY_VC',
 }
+
 namespace zkpld {
     const cryptosuite : string = 'bbs-termwise-signature-2023'
     export function redactControllerDoc(doc: any) {
@@ -119,6 +121,7 @@ namespace bbsSignature2020 {
         performance.mark(MARKERS.START_SIGN_VC, perfOptions)
         const vc = await Implementation_BbsBlsSignature2020.sign(preprocessedCredential, kp, dl)
         performance.mark(MARKERS.END_SIGN_VC, perfOptions)
+        logv2(vc, 'vc')
 
         performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
         const verificationResult = await Implementation_BbsBlsSignature2020.verify(vc, dl)
@@ -132,11 +135,59 @@ namespace bbsSignature2020 {
 
 }
 
+namespace ed25519Signature2020 {
+  import MyRegistry = bbsSignature2020.MyRegistry;
+
+  export async function main() {
+    const r = new MyRegistry()
+    const controller = 'did:example:test-ed25519-signature-2020'
+    const seedString = 'super-secretive-seed-of-at-least-32-bytes'
+
+
+    // Create keypair
+    const kp = await Implementation_Ed25519Signature2020.createKeypair(controller, seedString)
+
+    const vm = {
+        id: kp.id!,
+        controller: kp.controller!,
+        publicKeyMultibase: kp.publicKeyMultibase!
+    }
+    const controllerDocument = {
+        '@context': ['https://www.w3.org/ns/did/v1'],
+        type: kp.type,
+        id: kp.controller!,
+        verificationMethod: [ vm ],
+        assertionMethod: [ vm.id ]
+    }
+    // Register controller document and public keypair material
+    r.register(controller, controllerDocument)
+    r.register(vm.id, vm)
+    // Create documentloader that supports registry lookups
+    const dl = createDocumentLoader(defaultContexts, r)
+
+    // VC: preprocess
+    const preprocessedCredential = Implementation_Ed25519Signature2020.preprocessVC(credential)
+    // VC: sign
+    const vc = await Implementation_Ed25519Signature2020.sign(
+        preprocessedCredential,
+        kp,
+        dl
+    )
+    logv2(vc, 'vc')
+
+    // VC: verify
+    const verificationResult = await Implementation_Ed25519Signature2020.verify(vc, dl)
+    logv2(verificationResult, 'verificationResult')
+
+
+    }
+}
 async function printPerformanceRecords() {
     logv2(performance.getEntries(), 'performanceRecords')
     fs.writeFileSync('performanceRecords.json', JSON.stringify(performance.getEntries()))
 
 }
-zkpld.main().then(printPerformanceRecords).catch(console.error)
-bbsSignature2020.main().then(printPerformanceRecords).catch(console.error)
 
+// zkpld.main().then(printPerformanceRecords).catch(logv2)
+// bbsSignature2020.main().then(printPerformanceRecords).catch(logv2)
+ed25519Signature2020.main().then().catch(logv2)
