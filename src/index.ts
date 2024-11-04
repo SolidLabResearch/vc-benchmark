@@ -1,11 +1,10 @@
 import keypair from '../resources/zkp-ld/keypair.json';
 import credentialBbsTermwiseSignature2023 from '../resources/zkp-ld/vc0.json'
 import credential from '../resources/vc0.json';
-import disclosed from '../resources/zkp-ld/vc0.json';
+import disclosed from '../resources/zkp-ld/disclosed0.json'
 
 import {logv2} from "./utils/log";
-import {keyGen, sign, verify} from "@zkp-ld/jsonld-proofs";
-import {createDocumentLoader, defaultContexts, defaultDocumentLoader} from "./documentLoader";
+import {createDocumentLoader, defaultContexts} from "./documentLoader";
 import assert from "node:assert";
 import {
   _Implementation_BbsBlsSignature2020,
@@ -23,6 +22,8 @@ export const MARKERS = {
   END_SIGN_VC: 'END_SIGN_VC',
   START_VERIFY_VC: 'START_VERIFY_VC',
   END_VERIFY_VC: 'END_VERIFY_VC',
+  START_DERIVE: 'START_DERIVE',
+  END_DERIVE: 'END_DERIVE',
 }
 
 
@@ -57,7 +58,7 @@ export function registerControllerDocumentAtRegistry(controllerDoc: any, r: IReg
   r.register(controllerDoc.id, controllerDoc)
 
   // Register verification method's pub key
-  let { verificationMethod } = controllerDoc
+  let {verificationMethod} = controllerDoc
   let vmDoc = {
     '@context': controllerDoc['@context'],
     verificationMethod,
@@ -108,9 +109,18 @@ namespace zkpld {
     logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
 
-    // console.log('Derive VC')
-    // const vp = await // TODO
+    // Derive VC
+    console.log('>>> DERIVE VC')
+    performance.mark(MARKERS.START_DERIVE, perfOptions)
+    const vp = await implBbsTermwiseSignature2023.derive(vc, disclosed)
+    performance.mark(MARKERS.END_DERIVE, perfOptions)
     // logv2(vp, 'vp (derived)')
+
+    // Verify VP with derived VC
+    console.log('>>> VERIFY VP (DERIVED VC)')
+    const verificationResultVp = await implBbsTermwiseSignature2023.verifyVP(vp)
+    logv2(verificationResultVp, 'verify (vp)')
+    assert(verificationResultVp.verified === true)
   }
 }
 
