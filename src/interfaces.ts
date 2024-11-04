@@ -46,5 +46,6 @@ export interface IDidDocument {
 }
 
 export interface IImplementation {
-  sign(credential: any, key: any, documentLoader: any): any
+  sign(credential: any, key: any): Promise<any>
+  verify(vc: any): Promise<any>
 }

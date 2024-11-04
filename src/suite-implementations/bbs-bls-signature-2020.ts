@@ -9,8 +9,21 @@ import jsigs from 'jsonld-signatures';
 import {defaultDocumentLoader} from "../documentLoader";
 import {klona} from "klona";
 import {GenerateKeyPairOptions} from "@zkp-ld/bls12381-key-pair";
+import {AbstractImplementation} from "./AbstractImplementation";
 
-export namespace Implementation_BbsBlsSignature2020 {
+export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
+  sign(credential: any, key: any): any {
+    return _Implementation_BbsBlsSignature2020.sign(credential, key, this.documentLoader);
+  }
+
+  verify(vc: any): Promise<any> {
+    throw new Error('NOT YET IMPLEMENTED')
+    return Promise.resolve(undefined);
+  }
+
+
+}
+export namespace _Implementation_BbsBlsSignature2020 {
 
   export function _hack_addEnsureContextFunction(suite: any) {
     suite.ensureSuiteContext = ({document}: any) => {
@@ -56,7 +69,7 @@ export namespace Implementation_BbsBlsSignature2020 {
   }
 
   export async function derive(vc: any, disclosed: any) {
-    const derivedProof = await deriveProof(
+    return await deriveProof(
       vc,
       disclosed,
       {
