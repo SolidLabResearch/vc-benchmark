@@ -5,24 +5,115 @@ import {
   deriveProof,
 } from "@mattrglobal/jsonld-signatures-bbs";
 import jsigs from 'jsonld-signatures';
-
-import {defaultDocumentLoader} from "../documentLoader";
 import {klona} from "klona";
 import {GenerateKeyPairOptions} from "@zkp-ld/bls12381-key-pair";
 import {AbstractImplementation} from "./AbstractImplementation";
+// import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
+import {CONTEXTS} from "../contexts";
 
+
+type VerifiableCredential = any
+type VerifiablePresentation = any
 export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
-  sign(credential: any, key: any): any {
-    return _Implementation_BbsBlsSignature2020.sign(credential, key, this.documentLoader);
+  async sign(credential: any, key: any): Promise<any> {
+    const suite = _Implementation_BbsBlsSignature2020._hack_addEnsureContextFunction(
+      new BbsBlsSignature2020({key})
+    )
+    return await jsigs.sign(klona(credential), {
+      suite,
+      documentLoader: this.documentLoader,
+      purpose: new jsigs.purposes.AssertionProofPurpose(),
+    })
+
   }
 
-  verify(vc: any): Promise<any> {
-    throw new Error('NOT YET IMPLEMENTED')
-    return Promise.resolve(undefined);
+  async verify(vc: any): Promise<any> {
+
+    return await jsigs.verify(vc, {
+      suite: new BbsBlsSignature2020(),
+      purpose: new jsigs.purposes.AssertionProofPurpose(),
+      documentLoader: this.documentLoader,
+    })
   }
 
+  async deriveVC(vc: any, disclosedDocument: any): Promise<VerifiableCredential> {
+    return await deriveProof(
+      vc,
+      disclosedDocument,
+      {
+        suite: new BbsBlsSignatureProof2020(),
+        documentLoader: this.documentLoader,
+        // skipProofCompaction: false,
+      }
+    )
+  }
+
+  createPresentation(
+    credentials: VerifiableCredential[],
+    holder: undefined|string = undefined
+  ): VerifiablePresentation {
+    return {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+      ],
+      type: ['VerifiablePresentation'],
+      holder,
+      verifiableCredential: credentials
+    } as VerifiablePresentation
+  }
+
+  async signPresentation(p: VerifiablePresentation,
+                         challenge: string,
+                         purpose = new jsigs.purposes.AssertionProofPurpose()
+  ): Promise<VerifiablePresentation> {
+    return await jsigs.sign(
+      klona(p), {
+        suite: new BbsBlsSignatureProof2020(),
+        documentLoader: this.documentLoader,
+        purpose,
+        challenge
+      }
+    )
+  }
+
+
+  /**
+   * TODO: This function wraps deriveVC + signPresentation (to align with ZKP-LD's API)
+   * @param vc
+   * @param disclosedDocument
+   * @param challenge
+   */
+  async derive(vc: VerifiableCredential, disclosedDocument: any, challenge: string): Promise<VerifiablePresentation> {
+    const dvc = await this.deriveVC(vc, disclosedDocument)
+    const p = this.createPresentation([vc])
+    return p
+    // const vp = await this.signPresentation(p, challenge) // TODO: delete (incl. sign Presentation) ??
+    // return vp
+  }
+
+  async verifyVP(vp: any, challenge: string) {
+    return await jsigs.verify(
+      vp,
+      {
+        suite: new BbsBlsSignatureProof2020(),
+        documentLoader: this.documentLoader,
+        challenge,
+        purpose: new jsigs.purposes.AssertionProofPurpose(),
+      }
+    );
+  }
+
+  async verifyDerived(dvc: any) {
+    //Verify the derived proof
+    return await jsigs.verify(dvc, {
+      suite: new BbsBlsSignatureProof2020(),
+      purpose: new jsigs.purposes.AssertionProofPurpose(),
+      documentLoader: this.documentLoader
+    });
+  }
 
 }
+
 export namespace _Implementation_BbsBlsSignature2020 {
 
   export function _hack_addEnsureContextFunction(suite: any) {
@@ -60,6 +151,12 @@ export namespace _Implementation_BbsBlsSignature2020 {
     if (!vc['@context'].includes('https://w3id.org/security/bbs/v1'))
       out['@context'].push('https://w3id.org/security/bbs/v1');
 
+    // Exclude particular contexts
+    const toExclude = [
+      'https://www.w3.org/ns/data-integrity/v1'
+    ]
+    out['@context'] = out['@context'].filter((c: any)=>!toExclude.includes(c))
+
     // Remove proof (if any)
     if (Object.keys(vc).includes('proof'))
       delete out['proof']
@@ -68,17 +165,6 @@ export namespace _Implementation_BbsBlsSignature2020 {
     return out
   }
 
-  export async function derive(vc: any, disclosed: any) {
-    return await deriveProof(
-      vc,
-      disclosed,
-      {
-        suite: new BbsBlsSignatureProof2020(),
-        documentLoader: defaultDocumentLoader
-
-      }
-    )
-  }
 
 
   export async function createKeypair(gkp: GenerateKeyPairOptions): Promise<Bls12381G2KeyPair> {
@@ -86,25 +172,8 @@ export namespace _Implementation_BbsBlsSignature2020 {
     return await Bls12381G2KeyPair.generate(gkp)
   }
 
-  export async function sign(credential: any, keypair: Bls12381G2KeyPair, documentLoader: any) {
-    const suite = _hack_addEnsureContextFunction(
-      new BbsBlsSignature2020({key: keypair})
-    )
-    return await jsigs.sign(klona(credential), {
-      suite,
-      documentLoader,
-      purpose: new jsigs.purposes.AssertionProofPurpose(),
-    })
-  }
 
 
-  export async function verify(vc: any, documentLoader: any) {
-    return await jsigs.verify(vc, {
-      suite: new BbsBlsSignature2020(),
-      purpose: new jsigs.purposes.AssertionProofPurpose(),
-      documentLoader,
-    })
-  }
 
 
 }
