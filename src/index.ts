@@ -4,7 +4,7 @@ import credential from '../resources/vc0.json';
 import disclosed from '../resources/zkp-ld/disclosed0.json'
 import disclosedBbsBlsSignature2020 from '../resources/bbs-bls-signature-2020/disclosed0.json';
 import credentialEd25519Signature2020 from '../resources/ed25519-signature-2020/vc.json'
-
+import dataIntegrity from '@digitalbazaar/data-integrity-context';
 import {logv2} from "./utils/log";
 import {createDocumentLoader, defaultContexts} from "./documentLoader";
 import assert from "node:assert";
@@ -25,6 +25,8 @@ import path from "node:path";
 // @ts-ignore // TODO: fix
 import {credential as mockCredentialEd25519} from "../resources/ed25519-signature-2020/mock-data";
 import {writeFileSync} from "node:fs";
+import {Implementation_EcdsaSd2023Cryptosuite} from "./suite-implementations/ecdsa-sd-2023-cryptosuite";
+import {unsignedCredential, unsignedCredential as unsignedCredentialEcdsaSd2023} from "../resources/ecdsa-sd-2023/data";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -352,7 +354,81 @@ namespace ed25519Signature2020 {
     assert(verificationResult.verified === true)
   }
 }
+/**
+ * Init: 11/01/2025
+ */
+namespace ecdsaSd2023Cryptosuite {
+  const tempOutputDir = './temp/output/ecdsa-sd-2023-cryptosuite'
+  export const cryptosuite: string = 'ecdsa-sd-2023-cryptosuite'
 
+  export function getCredential() {
+    return unsignedCredentialEcdsaSd2023
+  }
+
+  export async function main() {
+    console.log(`Cryptosuite: ${cryptosuite}`)
+    const perfOptions = { detail: { implementation: ecdsaSd2023Cryptosuite.cryptosuite } }
+    const controller = 'did:example:test-ecdsa-sd-2023';
+
+    // Registry
+    const r = new MyRegistry();
+
+    // Keypair
+    const kp = await Implementation_EcdsaSd2023Cryptosuite.createKeypair(controller)
+
+    // Register the signatory's public key at registry r
+    const kpExport = await kp.export({publicKey: true, includeContext: true})
+    const vm: IVerificationMethod = {
+      '@context': 'https://w3id.org/security/multikey/v1',
+      type: 'Multikey',
+      id: kpExport.id,
+      controller: kpExport.controller,
+      publicKeyMultibase: kpExport.publicKeyMultibase,
+    }
+    r.register(vm.id, vm)
+
+    // Register signatory's corresponding controller document
+    const controllerDocEcdsaMultikey = {
+      '@context': [
+        'https://www.w3.org/ns/did/v1',
+        'https://w3id.org/security/multikey/v1'
+      ],
+      id: kpExport.controller,
+      assertionMethod: [vm.id]
+    };
+    r.register(controllerDocEcdsaMultikey.id, controllerDocEcdsaMultikey)
+
+    // Documentloader
+    const contexts = {
+      ...defaultContexts,
+      [dataIntegrity.DATA_INTEGRITY_CONTEXT_V2_URL]: dataIntegrity.CONTEXT
+    }
+
+    const dl     = createDocumentLoader(contexts, r)
+
+    const impl = new Implementation_EcdsaSd2023Cryptosuite(dl)
+    // Credential
+    let credential = klona(unsignedCredentialEcdsaSd2023)
+    credential['issuer'] = controllerDocEcdsaMultikey.id;
+
+    // Sign credential
+    const signedCredential = await impl.sign(unsignedCredential, kp)
+    // logv2(signedCredential, 'signedCredential(EcdsaSd2023Cryptosuite)')
+
+    // Derive credential
+    const selectivePointers = [
+      '/credentialSubject/id'
+    ]
+    const derivedCredential = await impl.derive(signedCredential, selectivePointers)
+    // logv2(derivedCredential, 'derivedCredential(EcdsaSd2023Cryptosuite)')
+
+    // Verify (derived) credential
+    const verificationResult = await impl.verify(derivedCredential)
+    // logv2(verificationResult, 'verificationResult(EcdsaSd2023Cryptosuite)')
+    assert(verificationResult.verified === true)
+
+  }
+}
 async function printPerformanceRecords() {
   const records = performance.getEntries();
   logv2(records, 'performanceRecords')
@@ -463,4 +539,8 @@ async function runBatch(n: number) {
   }
 }
 const batchSize = 150
-runBatch(batchSize).then().catch(console.error)
+// runBatch(batchSize).then().catch(console.error)
+/**
+ * DEV
+ */
+ecdsaSd2023Cryptosuite.main().then().catch(console.error)
