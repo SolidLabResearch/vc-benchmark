@@ -64,6 +64,10 @@ export class MyRegistry implements IRegistry {
   getIds(): string[] {
     return Array.from(this.db.keys())
   }
+
+  clear() {
+    this.db.clear()
+  }
 }
 
 export function registerControllerDocumentAtRegistry(controllerDoc: any, r: IRegistry) {
@@ -79,6 +83,9 @@ export function registerControllerDocumentAtRegistry(controllerDoc: any, r: IReg
   r.register(verificationMethod.id, vmDoc)
 }
 
+/**
+ * zkpld: bbs-termwise-signature-2023
+ */
 namespace zkpld {
   export const cryptosuite: string = 'bbs-termwise-signature-2023'
 
@@ -104,6 +111,7 @@ namespace zkpld {
         implementation: 'bbs-termwise-signature-2023'
       }
     }
+    console.log(`▶️${perfOptions.detail.implementation}`)
 
     // Sign VC
     console.log('>>> SIGN VC')
@@ -119,7 +127,7 @@ namespace zkpld {
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await implBbsTermwiseSignature2023.verify(vc)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
-    logv2(verificationResult, 'verificationResult')
+    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
 
     // Derive VC
@@ -136,11 +144,10 @@ namespace zkpld {
     performance.mark(MARKERS.START_VERIFY_DERIVED, perfOptions)
     const verificationResultVp = await implBbsTermwiseSignature2023.verifyVP(vp)
     performance.mark(MARKERS.END_VERIFY_DERIVED, perfOptions)
-    logv2(verificationResultVp, 'verify (vp)')
+    // logv2(verificationResultVp, 'verify (vp)')
     assert(verificationResultVp.verified === true)
   }
 }
-
 
 namespace bbsSignature2020 {
 
@@ -165,6 +172,7 @@ namespace bbsSignature2020 {
         implementation: 'BbsBlsSignature2020'
       }
     }
+    console.log(`▶️${perfOptions.detail.implementation}`)
     // Create issuer keypair
     const controller: string = 'did:example:test-bbs-signature-2020'
     const kp = await _Implementation_BbsBlsSignature2020.createKeypair({
@@ -220,8 +228,6 @@ namespace bbsSignature2020 {
     writeJsonFile('./temp/output/bbs-bls-signature-2020/vc.json', vc)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
     // logv2(vc, 'vc')
-
-
 
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await implBbsBlsSignature2020.verify(vc)
@@ -283,27 +289,28 @@ namespace ed25519Signature2020 {
   export const getDisclosed = bbsSignature2020.getDisclosed // TODO
 
   export async function main() {
+
     const perfOptions = {
       detail: {
         implementation: 'Ed25519Signature2020'
       }
     }
+    console.log(`▶️${perfOptions.detail.implementation}`)
     const r = new MyRegistry()
     const controller = 'did:example:test-ed25519-signature-2020'
-    const seedString = 'super-secretive-seed-of-at-least-32-bytes'
 
     // Create keypair
     // const kp = await Implementation_Ed25519Signature2020.createKeypair(controller, seedString)
     const kp = await Implementation_Ed25519Signature2020.createKeypairV2(controller)
-    logv2(kp, 'kp (Ed25519Signature2020)')
-    writeJsonFile(path.join(tempOutputDir, 'kp.json'), kp)
+    // logv2(kp, 'kp (Ed25519Signature2020)')
+    // writeJsonFile(path.join(tempOutputDir, 'kp.json'), kp)
 
     const vm = {
       id: kp.id!,
       controller: kp.controller!,
       publicKeyMultibase: kp.publicKeyMultibase!
     }
-    logv2(vm, 'vm (Ed25519Signature2020)')
+    // logv2(vm, 'vm (Ed25519Signature2020)')
 
     const controllerDocument = {
       '@context': ['https://www.w3.org/ns/did/v1'],
@@ -312,8 +319,7 @@ namespace ed25519Signature2020 {
       verificationMethod: [vm],
       assertionMethod: [vm.id]
     }
-    logv2(controllerDocument, 'ControllerDocument (Ed25519Signature2020)')
-
+    // logv2(controllerDocument, 'ControllerDocument (Ed25519Signature2020)')
 
     // Register controller document and public keypair material
     r.register(controller, controllerDocument)
@@ -347,13 +353,14 @@ namespace ed25519Signature2020 {
     writeJsonFile(path.join(tempOutputDir, 'vc.json'), vc)
     console.log('>>> VERIFY VC')
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
-    const verificationResult = await Implementation_Ed25519Signature2020.verify(vc, dl)
+    const verificationResult = await Implementation_Ed25519Signature2020.verifySignedCredential(vc, dl)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
     writeJsonFile(path.join(tempOutputDir, 'verificationResult.json'), verificationResult)
-    logv2(verificationResult, 'verificationResult')
+    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
   }
 }
+
 /**
  * Init: 11/01/2025
  */
@@ -362,12 +369,13 @@ namespace ecdsaSd2023Cryptosuite {
   export const cryptosuite: string = 'ecdsa-sd-2023-cryptosuite'
 
   export function getCredential() {
-    return unsignedCredentialEcdsaSd2023
+    return klona(unsignedCredentialEcdsaSd2023);
   }
 
   export async function main() {
     console.log(`Cryptosuite: ${cryptosuite}`)
     const perfOptions = { detail: { implementation: ecdsaSd2023Cryptosuite.cryptosuite } }
+    console.log(`▶️${perfOptions.detail.implementation}`)
     const controller = 'did:example:test-ecdsa-sd-2023';
 
     // Registry
@@ -403,35 +411,48 @@ namespace ecdsaSd2023Cryptosuite {
       ...defaultContexts,
       [dataIntegrity.DATA_INTEGRITY_CONTEXT_V2_URL]: dataIntegrity.CONTEXT
     }
+    const dl = createDocumentLoader(contexts, r)
 
-    const dl     = createDocumentLoader(contexts, r)
-
+    // Instantiate implementation
     const impl = new Implementation_EcdsaSd2023Cryptosuite(dl)
-    // Credential
-    let credential = klona(unsignedCredentialEcdsaSd2023)
+
+    // Credential (unsigned)
+    let credential = klona(ecdsaSd2023Cryptosuite.getCredential())
     credential['issuer'] = controllerDocEcdsaMultikey.id;
 
     // Sign credential
-    const signedCredential = await impl.sign(unsignedCredential, kp)
-    // logv2(signedCredential, 'signedCredential(EcdsaSd2023Cryptosuite)')
+    performance.mark(MARKERS.START_SIGN_VC, perfOptions)
+    const signedCredential = await impl.sign(credential, kp)
+    performance.mark(MARKERS.END_SIGN_VC, perfOptions)
+
+    // Verify signed credential
+    performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
+    const verificationResult = await impl.verifySignedCredential!(signedCredential)
+    // logv2(verificationResult, 'verificationResult')
+    assert(verificationResult.verified === true)
+    performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
+
 
     // Derive credential
-    const selectivePointers = [
-      '/credentialSubject/id'
-    ]
+    const selectivePointers = [ '/credentialSubject/id' ]
+    performance.mark(MARKERS.START_DERIVE, perfOptions)
     const derivedCredential = await impl.derive(signedCredential, selectivePointers)
-    // logv2(derivedCredential, 'derivedCredential(EcdsaSd2023Cryptosuite)')
+    performance.mark(MARKERS.END_DERIVE, perfOptions)
 
     // Verify (derived) credential
-    const verificationResult = await impl.verify(derivedCredential)
-    // logv2(verificationResult, 'verificationResult(EcdsaSd2023Cryptosuite)')
-    assert(verificationResult.verified === true)
+    performance.mark(MARKERS.START_VERIFY_DERIVED, perfOptions)
+    const derivedVerificationResult = await impl.verify(derivedCredential)
+    performance.mark(MARKERS.END_VERIFY_DERIVED, perfOptions)
+    assert(derivedVerificationResult.verified === true)
+    // logv2(derivedVerificationResult, 'derivedVerificationResult')
+    // Clear registry
+    r.clear()
 
   }
 }
 async function printPerformanceRecords() {
   const records = performance.getEntries();
-  logv2(records, 'performanceRecords')
+  // logv2(records, 'performanceRecords')
   const r0 = records[0]
 
   const r0Detail = {... r0.detail!} as Record<string, any>
@@ -453,7 +474,8 @@ async function printPerformanceRecords() {
 const implementationRunners = [
   zkpld,
   bbsSignature2020,
-  ed25519Signature2020
+  ed25519Signature2020,
+  ecdsaSd2023Cryptosuite
 ]
 // Promise.all(implementationRunners.map(ir => ir.main()))
 //   .then(printPerformanceRecords).catch(logv2)
@@ -491,6 +513,7 @@ runExperiment().then().catch(console.error)*/
 // zkpld.main().then(printPerformanceRecords).catch(logv2)
 // bbsSignature2020.main().then(printPerformanceRecords).catch(logv2)
 // ed25519Signature2020.main().then(printPerformanceRecords).catch(logv2)
+// ecdsaSd2023Cryptosuite.main().then(printPerformanceRecords).catch(logv2)
 
 /**
  * V2 RUN EXPERIMENT BATCH
@@ -501,8 +524,11 @@ async function runBatch(n: number) {
 
   let errors = []
   for await (const i of implementationRunners) {
+    console.log(`🅰️crypto suite: ${i.cryptosuite}`)
     const cs = Object(i).cryptosuite as string
+
     for (let j = 0; j < n; j++) {
+      console.log(`\t🅱️ iteration j: ${j}`)
       const experimentTag = `${cs}-${j}`
       try {
         // Clear any existing performance records
@@ -525,22 +551,22 @@ async function runBatch(n: number) {
         const fname =`performanceRecords_${batchTimestamp}_${experimentTag}.json`
         fs.writeFileSync(path.join('data', fname), JSON.stringify(dataToExport))
 
-
       } catch (e) {
-        errors.push({error: e, experimentTag})
+        console.error(`Error occurred (iteration: ${j}/${n-1})`)
+        errors.push({error: e, experimentTag, iteration: j, n})
       }
     }
   }
   if(errors.length > 0) {
-    console.error(`A total of ${errors.length} occurred!`)
+    console.error(`A total of ${errors.length} errors occurred!`)
     fs.writeFileSync(path.join('data', 'errors.json'), JSON.stringify(errors))
   } else {
     console.log('No errors occurred!')
   }
 }
-const batchSize = 150
-// runBatch(batchSize).then().catch(console.error)
+const batchSize = 100
+runBatch(batchSize).then().catch(console.error)
 /**
  * DEV
  */
-ecdsaSd2023Cryptosuite.main().then().catch(console.error)
+// ecdsaSd2023Cryptosuite.main().then().catch(console.error)

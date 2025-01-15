@@ -81,7 +81,7 @@ export namespace Implementation_Ed25519Signature2020 {
     return vc
   }
 
-  export async function verify(vc: any, documentLoader: any) {
+  export async function verifySignedCredential(vc: any, documentLoader: any) {
     return await jsigs.verify(vc, {
       suite: new Ed25519Signature2020(),
       purpose: new jsigs.purposes.AssertionProofPurpose(),

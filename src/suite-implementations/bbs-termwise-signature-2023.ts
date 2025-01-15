@@ -2,6 +2,12 @@ import {deriveProof, sign, VCPair, verify, verifyProof} from "@zkp-ld/jsonld-pro
 import {AbstractImplementation} from "./AbstractImplementation";
 
 export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementation {
+  verifySignedCredential?(vc: any): Promise<any> {
+      throw new Error("Method not implemented.");
+  }
+  verifyDerivedCredential?(dvc: any): Promise<any> {
+      throw new Error("Method not implemented.");
+  }
 
   async sign(credential: any, key: any): Promise<any> {
     return await sign(credential, key, this.documentLoader)

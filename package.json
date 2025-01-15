@@ -12,11 +12,9 @@
     "start:v2:dev": "npx nodemon --exec npm run start:v2",
     "pseudo": "npm run build && node build/pseudonymous-bbs-signature.js",
     "pseudo:dev": "npx nodemon --exec npx ts-node ./src/pseudonymous-bbs-signature.ts",
-    "impl:bbs-bls-signature-2020:dev": "npx nodemon --exec npx ts-node ./src/suite-implementations/bbs-bls-signature-2020.ts",
-    "sandbox:ecdsa-sd-2023": "tsx ./src/sandbox-ecdsa-sd-2023.ts",
-    "sandbox:ecdsa-sd-2023:dev": "npx nodemon --exec npm run sandbox:ecdsa-sd-2023"
+    "impl:bbs-bls-signature-2020:dev": "npx nodemon --exec npx ts-node ./src/suite-implementations/bbs-bls-signature-2020.ts"
   },
-  "author": "",
+  "author": "Gertjan De Mulder (gertjan.demulder@ugent.be)",
   "license": "MIT",
   "devDependencies": {
     "@types/jsonld": "./@types/jsonld",

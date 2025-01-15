@@ -5,9 +5,13 @@ import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey';
 import jsigs from 'jsonld-signatures-v11-2-1';
 import {klona} from "klona";
 
+
 export class Implementation_EcdsaSd2023Cryptosuite
 extends AbstractImplementation
 {
+  verifyDerivedCredential?(dvc: any): Promise<any> {
+      throw new Error("Method not implemented.");
+  }
 
   static async createKeypair(controller: string) {
     return await generateKeypair(controller)
@@ -43,6 +47,21 @@ extends AbstractImplementation
       documentLoader: this.documentLoader
     })
     return derivedCredential;
+  }
+
+
+  async verifySignedCredential(vc: any): Promise<any> {
+    const cryptosuite = ecdsaSd2023Cryptosuite.createConfirmCryptosuite()
+    const suite = new DataIntegrityProof({ cryptosuite })
+    const verificationResult = await jsigs.verify(
+      vc,
+      {
+        suite,
+        purpose: new jsigs.purposes.AssertionProofPurpose(),
+        documentLoader: this.documentLoader
+      }
+    )
+    return verificationResult;
   }
 
   async verify(vc: any): Promise<any> {

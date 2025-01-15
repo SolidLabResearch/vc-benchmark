@@ -10,4 +10,7 @@ export abstract class AbstractImplementation implements IImplementation {
 
   abstract sign(credential: any, key: any): Promise<any>
   abstract verify(vc: any): Promise<any>
+  abstract verifySignedCredential?(vc: any): Promise<any>
+  abstract verifyDerivedCredential?(dvc: any): Promise<any>
+
 }
