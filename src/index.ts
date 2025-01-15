@@ -414,75 +414,12 @@ namespace ecdsaSd2023Cryptosuite {
   }
 }
 
-async function printPerformanceRecords() {
-  const records = performance.getEntries();
-  // logv2(records, 'performanceRecords')
-  const r0 = records[0]
-
-  const r0Detail = {...r0.detail!} as Record<string, any>
-  console.log('r0Detail.implementation: ', r0Detail.implementation)
-
-
-  const fnameSuffix = r0Detail.implementation
-  const fnameTimestamp = `${Math.floor(Date.now() / 1000)}`
-
-  const fname = `performanceRecords_${fnameSuffix}_${fnameTimestamp}.json`
-  console.log(`Writing performance record: ${fname}`)
-  fs.writeFileSync(path.join('data', fname), JSON.stringify(performance.getEntries()))
-
-}
-
-/**
- * INVOKE ALL IMPLEMENTATION RUNNERS ITERATIVELY
- */
 const implementationRunners = [
   zkpld,
   bbsSignature2020,
   ed25519Signature2020,
   ecdsaSd2023Cryptosuite
 ]
-// Promise.all(implementationRunners.map(ir => ir.main()))
-//   .then(printPerformanceRecords).catch(logv2)
-/*
-async function runSequentially(implementationRunners: any[]) {
-  const funcs = implementationRunners.map(ir => ir.main)
-  for (const func of funcs) {
-    await func();
-    await printPerformanceRecords()
-    performance.clearMarks()
-  }
-}
-
-async function runExperiment() {
-  const N = 2
-  let errors = []
-  for(let i = 0; i < N; i++) {
-    try {
-      await runSequentially(implementationRunners)
-    } catch(err) {
-      errors.push({error: err, i})
-    }
-  }
-  if(errors.length > 0) {
-    console.error(`A total of ${errors.length} occurred!`)
-    fs.writeFileSync(path.join('data', 'errors.json'), JSON.stringify(errors))
-  }
-}
-
-runExperiment().then().catch(console.error)*/
-
-/**
- * SEPARATE IMPLEMENTATION RUNS
- */
-// zkpld.main().then(printPerformanceRecords).catch(logv2)
-// bbsSignature2020.main().then(printPerformanceRecords).catch(logv2)
-// ed25519Signature2020.main().then(printPerformanceRecords).catch(logv2)
-// ecdsaSd2023Cryptosuite.main().then(printPerformanceRecords).catch(logv2)
-
-/**
- * V2 RUN EXPERIMENT BATCH
- * 04/01/2025
- */
 async function runBatch(n: number) {
   const batchTimestamp = Math.floor(Date.now() / 1000)
 
