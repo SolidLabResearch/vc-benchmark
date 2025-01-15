@@ -12,6 +12,11 @@ import {logv2} from "../utils/log";
 export namespace Implementation_Ed25519Signature2020 {
 
 
+  /**
+   * TODO: safe delete
+   * @param controller
+   * @param seed
+   */
   export async function createKeypair(controller: string, seed: string) {
     let seedBytes = (new TextEncoder()).encode(seed)
     if (seedBytes.length < 32)

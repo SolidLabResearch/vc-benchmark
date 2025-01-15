@@ -1,8 +1,6 @@
 import keypair from '../resources/zkp-ld/keypair.json';
 import credentialBbsTermwiseSignature2023 from '../resources/zkp-ld/vc0.json'
-import credential from '../resources/vc0.json';
 import disclosed from '../resources/zkp-ld/disclosed0.json'
-import disclosedBbsBlsSignature2020 from '../resources/bbs-bls-signature-2020/disclosed0.json';
 import credentialEd25519Signature2020 from '../resources/ed25519-signature-2020/vc.json'
 import dataIntegrity from '@digitalbazaar/data-integrity-context';
 import {logv2} from "./utils/log";
@@ -18,15 +16,13 @@ import * as fs from "node:fs";
 import {Implementation_Ed25519Signature2020} from "./suite-implementations/ed255-signature-2020";
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
 import {klona} from "klona";
-import {readJsonFile, writeJsonFile} from "./utils/io";
 // @ts-ignore // TODO: refactor /resources to rootDir (/src)
 import {derivationFrame, unsigned} from "../resources/bbs-bls-signature-2020/demo-pseudonymity/data";
 import path from "node:path";
 // @ts-ignore // TODO: fix
 import {credential as mockCredentialEd25519} from "../resources/ed25519-signature-2020/mock-data";
-import {writeFileSync} from "node:fs";
 import {Implementation_EcdsaSd2023Cryptosuite} from "./suite-implementations/ecdsa-sd-2023-cryptosuite";
-import {unsignedCredential, unsignedCredential as unsignedCredentialEcdsaSd2023} from "../resources/ecdsa-sd-2023/data";
+import {unsignedCredential as unsignedCredentialEcdsaSd2023} from "../resources/ecdsa-sd-2023/data";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -99,7 +95,6 @@ namespace zkpld {
     const credential = credentialBbsTermwiseSignature2023;
     const r = new MyRegistry()
 
-
     const controllerDoc = zkpld.redactControllerDoc(keypair)
     registerControllerDocumentAtRegistry(controllerDoc, r)
 
@@ -118,7 +113,6 @@ namespace zkpld {
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
     const vc = await implBbsTermwiseSignature2023.sign(credential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
-    // logv2(vc, 'vc')
     assert(vc.proof.cryptosuite === cryptosuite)
 
 
@@ -127,7 +121,6 @@ namespace zkpld {
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await implBbsTermwiseSignature2023.verify(vc)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
-    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
 
     // Derive VC
@@ -135,17 +128,16 @@ namespace zkpld {
     performance.mark(MARKERS.START_DERIVE, perfOptions)
     const vp = await implBbsTermwiseSignature2023.derive(vc, disclosed)
     performance.mark(MARKERS.END_DERIVE, perfOptions)
-    // logv2(vp, 'vp (derived)')
-
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/vp.json', vp)
 
     // Verify VP with derived VC
     console.log('>>> VERIFY VP (DERIVED VC)')
     performance.mark(MARKERS.START_VERIFY_DERIVED, perfOptions)
     const verificationResultVp = await implBbsTermwiseSignature2023.verifyVP(vp)
     performance.mark(MARKERS.END_VERIFY_DERIVED, perfOptions)
-    // logv2(verificationResultVp, 'verify (vp)')
     assert(verificationResultVp.verified === true)
+
+    // Clear registry
+    r.clear()
   }
 }
 
@@ -154,7 +146,7 @@ namespace bbsSignature2020 {
   export const cryptosuite: string = 'bbs-bls-signature-2020'
 
   export const contextsToExclude = [
-      'https://www.w3.org/ns/data-integrity/v1'
+    'https://www.w3.org/ns/data-integrity/v1'
   ]
 
   export function getCredential() {
@@ -162,9 +154,11 @@ namespace bbsSignature2020 {
     // OPTION 2
     return unsigned;
   }
+
   export function getDisclosed() {
     return derivationFrame
   }
+
   export async function main() {
     const r = new MyRegistry()
     const perfOptions = {
@@ -202,12 +196,10 @@ namespace bbsSignature2020 {
     r.register(controller, controllerDocument)
     r.register(vm.id, vm)
 
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/controllerDocument.json', controllerDocument)
-
     // Create documentloader that supports registry lookups
     const preprocessedContexts = Object.fromEntries(
       Object.entries(defaultContexts)
-        .filter((pair)=> !bbsSignature2020.contextsToExclude.includes(pair[0]))
+        .filter((pair) => !bbsSignature2020.contextsToExclude.includes(pair[0]))
     )
 
     const dl = createDocumentLoader(preprocessedContexts, r)
@@ -215,59 +207,46 @@ namespace bbsSignature2020 {
     // Instantiate implementation
     const implBbsBlsSignature2020 = new Implementation_BbsBlsSignature2020(dl)
 
-
     // Preprocess VC
     const credential = getCredential()
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/credential.json', credential)
     const preprocessedCredential = _Implementation_BbsBlsSignature2020.preprocessVC(credential)
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/preprocessedCredential.json', preprocessedCredential)
+
 
     // Sign VC
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
     const vc = await implBbsBlsSignature2020.sign(preprocessedCredential, kp)
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/vc.json', vc)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
-    // logv2(vc, 'vc')
 
+    // Verify VC
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await implBbsBlsSignature2020.verify(vc)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
-
-    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
 
-
+    console.log('>>> DERIVE VC')
     // Preprocess disclosed document
     let preprocessedDisclosed = klona(getDisclosed())
     preprocessedDisclosed['@context'] = preprocessedDisclosed['@context'].filter((c) => (typeof c === "string") && !bbsSignature2020.contextsToExclude.includes(c))
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/preprocessedDisclosed.json', preprocessedDisclosed)
-
-    const challenge = 'challenge123'
-    console.log('>>> DERIVE VC')
-
     performance.mark(MARKERS.START_DERIVE, perfOptions)
     let dvc = await implBbsBlsSignature2020.deriveVC(vc, preprocessedDisclosed,)
     performance.mark(MARKERS.END_DERIVE, perfOptions)
-
-    // dvc['proof']['type'] = dvc['proof']['type'].replace('sec:', '') // TODO: DELETE?
-    // delete dvc['sec:proof'] // TODO: DELETE?
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/dvc.json', dvc)
 
     console.log('>>> VERIFY DERIVED VC')
     performance.mark(MARKERS.START_VERIFY_DERIVED, perfOptions)
     const verificationResultDerivedVC = await implBbsBlsSignature2020.verifyDerived(dvc)
     performance.mark(MARKERS.END_VERIFY_DERIVED, perfOptions)
-    writeJsonFile('./temp/output/bbs-bls-signature-2020/verificationResultDerivedVC.json', verificationResultDerivedVC)
     assert(verificationResultDerivedVC.verified === true)
 
+    // Clear registry
+    r.clear()
   }
 
 }
 
 namespace ed25519Signature2020 {
-  const tempOutputDir = './temp/output/ed25519-signature-2020'
+
   export const cryptosuite: string = 'ed25519-signature-2023'
-  export const contextsToInclude = [
+  export const contextsToInclude = [ // TODO: CLEAN UP COMMENTED-OUT CONTEXTS
     'https://www.w3.org/2018/credentials/v1',
     // 'https://schema.org/',
     // 'https://w3id.org/security/multikey/v1',
@@ -302,15 +281,12 @@ namespace ed25519Signature2020 {
     // Create keypair
     // const kp = await Implementation_Ed25519Signature2020.createKeypair(controller, seedString)
     const kp = await Implementation_Ed25519Signature2020.createKeypairV2(controller)
-    // logv2(kp, 'kp (Ed25519Signature2020)')
-    // writeJsonFile(path.join(tempOutputDir, 'kp.json'), kp)
 
     const vm = {
       id: kp.id!,
       controller: kp.controller!,
       publicKeyMultibase: kp.publicKeyMultibase!
     }
-    // logv2(vm, 'vm (Ed25519Signature2020)')
 
     const controllerDocument = {
       '@context': ['https://www.w3.org/ns/did/v1'],
@@ -319,53 +295,39 @@ namespace ed25519Signature2020 {
       verificationMethod: [vm],
       assertionMethod: [vm.id]
     }
-    // logv2(controllerDocument, 'ControllerDocument (Ed25519Signature2020)')
 
     // Register controller document and public keypair material
     r.register(controller, controllerDocument)
     r.register(vm.id, vm)
     // Create documentloader that supports registry lookups
-    // Create documentloader that supports registry lookups
     const preprocessedContexts = Object.fromEntries(
       Object.entries(defaultContexts)
-        .filter((pair)=> ed25519Signature2020.contextsToInclude.includes(pair[0]))
+        .filter((pair) => ed25519Signature2020.contextsToInclude.includes(pair[0]))
     )
 
     const dl = createDocumentLoader(preprocessedContexts, r)
-    // const dl = createDocumentLoader(defaultContexts, r)
 
     // VC: preprocess
     const credential = ed25519Signature2020.getMockCredential()
-    // const credential = ed25519Signature2020.getCredential()
     const preprocessedCredential = Implementation_Ed25519Signature2020.preprocessVC(credential)
-    writeJsonFile(path.join(tempOutputDir, 'preprocessedCredential.json'), preprocessedCredential)
+
     console.log('>>> SIGN VC')
-    /**
-     * NOTE: Compatibility issue: jsonld-signatures 7.0.0 does not work with
-     */
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
-    const vc = await Implementation_Ed25519Signature2020.sign(
-      preprocessedCredential,
-      kp,
-      dl
-    )
+    const vc = await Implementation_Ed25519Signature2020.sign(preprocessedCredential, kp, dl)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
-    writeJsonFile(path.join(tempOutputDir, 'vc.json'), vc)
+
     console.log('>>> VERIFY VC')
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await Implementation_Ed25519Signature2020.verifySignedCredential(vc, dl)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
-    writeJsonFile(path.join(tempOutputDir, 'verificationResult.json'), verificationResult)
-    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
+
+    // Clear registry
+    r.clear()
   }
 }
 
-/**
- * Init: 11/01/2025
- */
 namespace ecdsaSd2023Cryptosuite {
-  const tempOutputDir = './temp/output/ecdsa-sd-2023-cryptosuite'
   export const cryptosuite: string = 'ecdsa-sd-2023-cryptosuite'
 
   export function getCredential() {
@@ -374,7 +336,7 @@ namespace ecdsaSd2023Cryptosuite {
 
   export async function main() {
     console.log(`Cryptosuite: ${cryptosuite}`)
-    const perfOptions = { detail: { implementation: ecdsaSd2023Cryptosuite.cryptosuite } }
+    const perfOptions = {detail: {implementation: ecdsaSd2023Cryptosuite.cryptosuite}}
     console.log(`▶️${perfOptions.detail.implementation}`)
     const controller = 'did:example:test-ecdsa-sd-2023';
 
@@ -387,6 +349,7 @@ namespace ecdsaSd2023Cryptosuite {
     // Register the signatory's public key at registry r
     const kpExport = await kp.export({publicKey: true, includeContext: true})
     const vm: IVerificationMethod = {
+      // TODO: fix TS2353: Object literal may only specify known properties, and '@context' does not exist in type IVerificationMethod
       '@context': 'https://w3id.org/security/multikey/v1',
       type: 'Multikey',
       id: kpExport.id,
@@ -428,13 +391,12 @@ namespace ecdsaSd2023Cryptosuite {
     // Verify signed credential
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
     const verificationResult = await impl.verifySignedCredential!(signedCredential)
-    // logv2(verificationResult, 'verificationResult')
     assert(verificationResult.verified === true)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
 
 
     // Derive credential
-    const selectivePointers = [ '/credentialSubject/id' ]
+    const selectivePointers = ['/credentialSubject/id']
     performance.mark(MARKERS.START_DERIVE, perfOptions)
     const derivedCredential = await impl.derive(signedCredential, selectivePointers)
     performance.mark(MARKERS.END_DERIVE, perfOptions)
@@ -444,25 +406,26 @@ namespace ecdsaSd2023Cryptosuite {
     const derivedVerificationResult = await impl.verify(derivedCredential)
     performance.mark(MARKERS.END_VERIFY_DERIVED, perfOptions)
     assert(derivedVerificationResult.verified === true)
-    // logv2(derivedVerificationResult, 'derivedVerificationResult')
+
     // Clear registry
     r.clear()
 
   }
 }
+
 async function printPerformanceRecords() {
   const records = performance.getEntries();
   // logv2(records, 'performanceRecords')
   const r0 = records[0]
 
-  const r0Detail = {... r0.detail!} as Record<string, any>
-  console.log('r0Detail.implementation: ', r0Detail.implementation )
+  const r0Detail = {...r0.detail!} as Record<string, any>
+  console.log('r0Detail.implementation: ', r0Detail.implementation)
 
 
   const fnameSuffix = r0Detail.implementation
   const fnameTimestamp = `${Math.floor(Date.now() / 1000)}`
 
-  const fname =`performanceRecords_${fnameSuffix}_${fnameTimestamp}.json`
+  const fname = `performanceRecords_${fnameSuffix}_${fnameTimestamp}.json`
   console.log(`Writing performance record: ${fname}`)
   fs.writeFileSync(path.join('data', fname), JSON.stringify(performance.getEntries()))
 
@@ -548,23 +511,24 @@ async function runBatch(n: number) {
           batchTimestamp
         }
 
-        const fname =`performanceRecords_${batchTimestamp}_${experimentTag}.json`
+        const fname = `performanceRecords_${batchTimestamp}_${experimentTag}.json`
         fs.writeFileSync(path.join('data', fname), JSON.stringify(dataToExport))
 
       } catch (e) {
-        console.error(`Error occurred (iteration: ${j}/${n-1})`)
+        console.error(`Error occurred (iteration: ${j}/${n - 1})`, e)
         errors.push({error: e, experimentTag, iteration: j, n})
       }
     }
   }
-  if(errors.length > 0) {
+  if (errors.length > 0) {
     console.error(`A total of ${errors.length} errors occurred!`)
     fs.writeFileSync(path.join('data', 'errors.json'), JSON.stringify(errors))
   } else {
     console.log('No errors occurred!')
   }
 }
-const batchSize = 100
+
+const batchSize = 2
 runBatch(batchSize).then().catch(console.error)
 /**
  * DEV
