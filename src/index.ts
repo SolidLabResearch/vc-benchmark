@@ -466,9 +466,6 @@ async function runBatch(n: number) {
   }
 }
 
+// Driver
 const batchSize = 2
 runBatch(batchSize).then().catch(console.error)
-/**
- * DEV
- */
-// ecdsaSd2023Cryptosuite.main().then().catch(console.error)

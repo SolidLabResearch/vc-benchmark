@@ -1,8 +1,8 @@
-import * as jsonld from 'jsonld';
-import {DocumentLoader} from "@zkp-ld/jsonld-proofs";
+
 import {CONTEXTS} from "./contexts";
 import {logv2} from "./utils/log";
 import {IRegistry} from "./interfaces";
+
 interface CreateDocumentLoaderOptionsDefault {
     logging: { urls: { missing: boolean; present: boolean }; documents: boolean; loadedContextNames: boolean };
 }
@@ -11,7 +11,7 @@ export const createDocumentLoaderOptionsDefault: CreateDocumentLoaderOptionsDefa
     logging: {
         loadedContextNames: true,
         urls: {
-            present:true, // Log URLs present in contexts
+            present:false, // Log URLs present in contexts
             missing: true}, // Log URLs not present in contexts
         documents: false // Log resolved document
     }
@@ -35,7 +35,6 @@ export const createDocumentLoader = (
                 console.log(`URL: ${url}`)
             if(options.logging.documents)
                 logv2(contexts[url], `📄Document:`)
-
 
             return {
                 contextUrl: undefined, // this is for a context via a link header
@@ -69,27 +68,4 @@ export const createDocumentLoader = (
 }
 export const localDocumentLoader = createDocumentLoader(CONTEXTS)
 
-
-// grab the built-in Node.js document loader
-// const nodeDocumentLoader = jsonld.documentLoaders.node();
-
-// export const remoteDocumentLoader: DocumentLoader = async (
-//     url
-// ) => {
-//     if (url in CONTEXTS) {
-//         return {
-//             contextUrl: undefined, // this is for a context via a link header
-//             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-//             document: CONTEXTS[url], // this is the actual document that was loaded
-//             documentUrl: url, // this is the actual context URL after redirects
-//         }
-//     }
-//
-//     // call the default documentLoader
-//     const res = await nodeDocumentLoader(url);
-//
-//     return res;
-// };
-
 export const defaultContexts = CONTEXTS
-export const defaultDocumentLoader = localDocumentLoader
