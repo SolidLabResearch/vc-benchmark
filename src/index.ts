@@ -1,7 +1,7 @@
-import keypair from '../resources/zkp-ld/keypair.json';
-import credentialBbsTermwiseSignature2023 from '../resources/zkp-ld/vc0.json'
-import disclosed from '../resources/zkp-ld/disclosed0.json'
-import credentialEd25519Signature2020 from '../resources/ed25519-signature-2020/vc.json'
+import keypair from './resources/zkp-ld/keypair.json';
+import credentialBbsTermwiseSignature2023 from './resources/zkp-ld/vc0.json'
+import disclosed from './resources/zkp-ld/disclosed0.json'
+import credentialEd25519Signature2020 from './resources/ed25519-signature-2020/vc.json'
 import dataIntegrity from '@digitalbazaar/data-integrity-context';
 import {logv2} from "./utils/log";
 import {createDocumentLoader, defaultContexts} from "./documentLoader";
@@ -17,12 +17,12 @@ import {Implementation_Ed25519Signature2020} from "./suite-implementations/ed255
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
 import {klona} from "klona";
 // @ts-ignore // TODO: refactor /resources to rootDir (/src)
-import {derivationFrame, unsigned} from "../resources/bbs-bls-signature-2020/demo-pseudonymity/data";
+import {derivationFrame, unsigned} from "./resources/bbs-bls-signature-2020/demo-pseudonymity/data";
 import path from "node:path";
 // @ts-ignore // TODO: fix
-import {credential as mockCredentialEd25519} from "../resources/ed25519-signature-2020/mock-data";
+import {credential as mockCredentialEd25519} from "./resources/ed25519-signature-2020/mock-data";
 import {Implementation_EcdsaSd2023Cryptosuite} from "./suite-implementations/ecdsa-sd-2023-cryptosuite";
-import {unsignedCredential as unsignedCredentialEcdsaSd2023} from "../resources/ecdsa-sd-2023/data";
+import {unsignedCredential as unsignedCredentialEcdsaSd2023} from "./resources/ecdsa-sd-2023/data";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -350,6 +350,7 @@ namespace ecdsaSd2023Cryptosuite {
     const kpExport = await kp.export({publicKey: true, includeContext: true})
     const vm: IVerificationMethod = {
       // TODO: fix TS2353: Object literal may only specify known properties, and '@context' does not exist in type IVerificationMethod
+      // @ts-ignore
       '@context': 'https://w3id.org/security/multikey/v1',
       type: 'Multikey',
       id: kpExport.id,

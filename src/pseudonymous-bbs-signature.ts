@@ -2,9 +2,9 @@
  * Objective: selectively disclose data using a pseudonymous signature
  * https://www.w3.org/TR/2024/CRD-vc-di-bbs-20241015/#createdisclosuredata
  */
-import keypair from '../resources/zkp-ld/keypair.json';
-import credential from '../resources/zkp-ld/vc0.json';
-import disclosed from '../resources/zkp-ld/disclosed0.json';
+import keypair from './resources/zkp-ld/keypair.json';
+import credential from './resources/zkp-ld/vc0.json';
+import disclosed from './resources/zkp-ld/disclosed0.json';
 
 import {logv2} from "./utils/log";
 import {localDocumentLoader} from "./documentLoader";
