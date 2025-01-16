@@ -9,7 +9,10 @@ import {logv2} from "./utils/log";
 const credentialSetups = {
   'zkpld-vc0': {
     'credential': 'src/resources/zkp-ld/vc0.json',
-    'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json'
+    'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json',
+    'meta': {
+      'note': 'Applying the disclosure document as JSON-LD Frame for the credential will result in errors.'
+    }
   },
   'vc00': {
     'credential': 'src/resources/credentials/vc00.json',
@@ -18,14 +21,23 @@ const credentialSetups = {
   'vc01': {
     'credential': 'src/resources/credentials/vc01.json',
     'disclosureDocument': 'src/resources/credentials/vc01-disclosure-document.json'
+  },
+  'vc03': {
+    'meta': {
+      'credential': { 'source': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/vc3.json' },
+      'disclosureDocument': {'source': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/disclosed3.json'},
+    },
+    'credential': 'src/resources/credentials/vc03.json',
+    'disclosureDocument': 'src/resources/credentials/vc03-disclosure-document.json'
   }
 }
 const implementationRunners = {
   async *[Symbol.asyncIterator]() {
     // bbs-termwise-signature 2023 with original test credential setup
-    yield { i: zkpld, ...credentialSetups['zkpld-vc0'] }
-    yield { i: zkpld, ...credentialSetups['vc00'] } // TODO: fix -  RDFProofsError(BBSPlus(InvalidSignature))
-    yield { i: zkpld, ...credentialSetups['vc01'] } // TODO: fix - TypeError: json-diff error
+    // yield { i: zkpld, ...credentialSetups['zkpld-vc0'] } // Will fail! See zkpld-vc0/meta/note in credentialSetups.
+    // yield { i: zkpld, ...credentialSetups['vc00'] } // TODO: fix -  RDFProofsError(BBSPlus(InvalidSignature))
+    yield { i: zkpld, ...credentialSetups['vc01'] } // Works
+    yield { i: zkpld, ...credentialSetups['vc03'] } // Works
     // yield { i: bbsSignature2020, ...credentialSetups['vc00'] }
     // yield { i: ed25519Signature2020, ...credentialSetups['vc00'] }
     // yield { i: ecdsaSd2023Cryptosuite, ...credentialSetups['vc00'] }
@@ -74,7 +86,7 @@ async function runBatch(n: number) {
         fs.writeFileSync(path.join('data', fname), JSON.stringify(dataToExport))
 
       } catch (e) {
-        console.error(`Error occurred (iteration: ${j}/${n - 1})`, e)
+        console.error(`Error occurred (iteration: ${j}/${n - 1}):\n`, e)
         errors.push({error: e, experimentTag, iteration: j, n})
       }
     }

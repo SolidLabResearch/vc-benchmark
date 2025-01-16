@@ -21,6 +21,8 @@ import disclosed from "./resources/zkp-ld/disclosed0.json";
 import {MyRegistry} from "./MyRegistry";
 import {registerControllerDocumentAtRegistry} from "./helpers";
 import {logv2} from "./utils/log";
+import jsonld from "jsonld";
+import {writeJsonFile} from "./utils/io";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -49,8 +51,31 @@ export namespace zkpld {
       doc['issuer'] = issuer
       return doc;
     }
+    export function updateContext(doc: any) {
+      if (!Array.isArray(doc['@context']))
+        throw new Error('@context must be an array!')
+
+      // Contexts: required
+      const ctxRequired = [
+        "https://www.w3.org/ns/data-integrity/v1",
+      ]
+      ctxRequired.forEach(c => {
+        if (!doc['@context'].includes(c))
+          doc['@context'].push(c);
+      })
+
+      // Contexts: to exclude
+      const ctxToExclude = [
+        'https://w3id.org/security/bbs/v1'
+      ]
+      doc['@context'] = doc['@context'].filter((c: any)=>!ctxToExclude.includes(c))
+
+      return doc
+    }
+
     export function addProofObject(doc: any): any {
       doc["proof"]= {
+        '@context': "https://www.w3.org/ns/data-integrity/v1",
         "type": "DataIntegrityProof",
         "created": "2023-02-09T09:35:07Z",
         "cryptosuite": "bbs-termwise-signature-2023",
@@ -69,6 +94,8 @@ export namespace zkpld {
     const controllerDoc = zkpld.redactControllerDoc(keypair)
     registerControllerDocumentAtRegistry(controllerDoc, r)
 
+    logv2(controllerDoc, 'controllerDoc')
+
     const dl = createDocumentLoader(defaultContexts, r)
 
     const implBbsTermwiseSignature2023 = new Implementation_BbsTermwiseSignature2023(dl)
@@ -81,7 +108,8 @@ export namespace zkpld {
 
     // Sign VC
     console.log('>>> SIGN VC')
-    const preprocessedCredential = zkpld.preprocessing.addProofObject(credential)
+    let preprocessedCredential = zkpld.preprocessing.addProofObject(credential)
+    zkpld.preprocessing.updateContext(preprocessedCredential)
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
     const vc = await implBbsTermwiseSignature2023.sign(preprocessedCredential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
@@ -98,13 +126,27 @@ export namespace zkpld {
     // Derive VC
     console.log('>>> DERIVE VC')
 
+    // Preprocessing
     zkpld.preprocessing.addIssuer(vc, controllerDoc.id)
-    zkpld.preprocessing.addIssuer(disclosureDocument, controllerDoc.id)
+    let preprocessedDisclosureDocument = klona(disclosureDocument) as any
+    zkpld.preprocessing.addIssuer(preprocessedDisclosureDocument, controllerDoc.id)
+    zkpld.preprocessing.updateContext(preprocessedDisclosureDocument)
+
+    /**
+     * TODO: verify that zkpld DOES NOT apply/support JSON-LD Frames? Hence, this has to be done as a prior step?
+     * For example, zkpld throws an error when using the @explicit keyword in the disclosure document.
+     */
+    preprocessedDisclosureDocument = await jsonld.frame(vc, preprocessedDisclosureDocument)
+    zkpld.preprocessing.addProofObject(preprocessedDisclosureDocument)
 
     logv2(vc, 'vc')
     logv2(disclosureDocument, 'disclosureDocument')
+    logv2(preprocessedDisclosureDocument, 'preprocessedDisclosureDocument')
+    // writeJsonFile('temp.derive-input-vc.json', vc)
+    // writeJsonFile('temp.derive-input-disclosureDocument.json', disclosureDocument)
+
     performance.mark(MARKERS.START_DERIVE, perfOptions)
-    const vp = await implBbsTermwiseSignature2023.derive(vc, disclosureDocument)
+    const vp = await implBbsTermwiseSignature2023.derive(vc, preprocessedDisclosureDocument)
     performance.mark(MARKERS.END_DERIVE, perfOptions)
     logv2(vp, 'vp (derived)')
 
