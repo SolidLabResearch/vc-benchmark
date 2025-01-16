@@ -2,20 +2,51 @@ import {performance} from "node:perf_hooks";
 import * as fs from "node:fs";
 import path from "node:path";
 import {bbsSignature2020, ecdsaSd2023Cryptosuite, ed25519Signature2020, zkpld} from "./experiment";
+import {readJsonFile} from "./utils/io";
+import {logv2} from "./utils/log";
 
-const implementationRunners = [
-  zkpld,
-  bbsSignature2020,
-  ed25519Signature2020,
-  ecdsaSd2023Cryptosuite
-]
+
+const credentialSetups = {
+  'zkpld-vc0': {
+    'credential': 'src/resources/zkp-ld/vc0.json',
+    'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json'
+  },
+  'vc00': {
+    'credential': 'src/resources/credentials/vc00.json',
+    'disclosureDocument': 'src/resources/credentials/vc00-disclosure-document.json'
+  },
+  'vc01': {
+    'credential': 'src/resources/credentials/vc01.json',
+    'disclosureDocument': 'src/resources/credentials/vc01-disclosure-document.json'
+  }
+}
+const implementationRunners = {
+  async *[Symbol.asyncIterator]() {
+    // bbs-termwise-signature 2023 with original test credential setup
+    yield { i: zkpld, ...credentialSetups['zkpld-vc0'] }
+    yield { i: zkpld, ...credentialSetups['vc00'] } // TODO: fix -  RDFProofsError(BBSPlus(InvalidSignature))
+    yield { i: zkpld, ...credentialSetups['vc01'] } // TODO: fix - TypeError: json-diff error
+    // yield { i: bbsSignature2020, ...credentialSetups['vc00'] }
+    // yield { i: ed25519Signature2020, ...credentialSetups['vc00'] }
+    // yield { i: ecdsaSd2023Cryptosuite, ...credentialSetups['vc00'] }
+  }
+}
 
 async function runBatch(n: number) {
   const batchTimestamp = Math.floor(Date.now() / 1000)
 
   let errors = []
-  for await (const i of implementationRunners) {
-    console.log(`🅰️crypto suite: ${i.cryptosuite}`)
+  for await (const {i, credential: cPath, disclosureDocument: dPath} of implementationRunners) {
+
+    const credential = readJsonFile(cPath)
+    const disclosureDocument = readJsonFile(dPath)
+    logv2(credential, 'credential')
+    logv2(disclosureDocument, 'disclosureDocument')
+    console.log(`
+    🅰️crypto suite: ${i.cryptosuite}
+    c: ${cPath}
+    d: ${dPath}`)
+
     const cs = Object(i).cryptosuite as string
 
     for (let j = 0; j < n; j++) {
@@ -26,7 +57,7 @@ async function runBatch(n: number) {
         performance.clearMarks()
 
         // Execute implementation i for the j-th time
-        await i.main()
+        await i.main(credential, disclosureDocument)
 
         // Export performance records
         const records = performance.getEntries();
@@ -57,5 +88,5 @@ async function runBatch(n: number) {
 }
 
 // Driver
-const batchSize = 2
+const batchSize = 1
 runBatch(batchSize).then().catch(console.error)

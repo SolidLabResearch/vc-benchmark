@@ -20,6 +20,7 @@ import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/b
 import disclosed from "./resources/zkp-ld/disclosed0.json";
 import {MyRegistry} from "./MyRegistry";
 import {registerControllerDocumentAtRegistry} from "./helpers";
+import {logv2} from "./utils/log";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -43,8 +44,26 @@ export namespace zkpld {
     return redactedDoc
   }
 
-  export async function main() {
-    const credential = credentialBbsTermwiseSignature2023;
+  export namespace preprocessing {
+    export function addIssuer(doc: any, issuer: string) {
+      doc['issuer'] = issuer
+      return doc;
+    }
+    export function addProofObject(doc: any): any {
+      doc["proof"]= {
+        "type": "DataIntegrityProof",
+        "created": "2023-02-09T09:35:07Z",
+        "cryptosuite": "bbs-termwise-signature-2023",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:example:issuer0#bls12_381-g2-pub001"
+      }
+      return doc
+    }
+  }
+
+
+  export async function main(credential: string, disclosureDocument: string) {
+    // const credential = credentialBbsTermwiseSignature2023;
     const r = new MyRegistry()
 
     const controllerDoc = zkpld.redactControllerDoc(keypair)
@@ -62,8 +81,9 @@ export namespace zkpld {
 
     // Sign VC
     console.log('>>> SIGN VC')
+    const preprocessedCredential = zkpld.preprocessing.addProofObject(credential)
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
-    const vc = await implBbsTermwiseSignature2023.sign(credential, keypair)
+    const vc = await implBbsTermwiseSignature2023.sign(preprocessedCredential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
     assert(vc.proof.cryptosuite === cryptosuite)
 
@@ -77,9 +97,16 @@ export namespace zkpld {
 
     // Derive VC
     console.log('>>> DERIVE VC')
+
+    zkpld.preprocessing.addIssuer(vc, controllerDoc.id)
+    zkpld.preprocessing.addIssuer(disclosureDocument, controllerDoc.id)
+
+    logv2(vc, 'vc')
+    logv2(disclosureDocument, 'disclosureDocument')
     performance.mark(MARKERS.START_DERIVE, perfOptions)
-    const vp = await implBbsTermwiseSignature2023.derive(vc, disclosed)
+    const vp = await implBbsTermwiseSignature2023.derive(vc, disclosureDocument)
     performance.mark(MARKERS.END_DERIVE, perfOptions)
+    logv2(vp, 'vp (derived)')
 
     // Verify VP with derived VC
     console.log('>>> VERIFY VP (DERIVED VC)')
