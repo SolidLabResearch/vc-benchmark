@@ -18,7 +18,7 @@ export class MyRegistry implements IRegistry {
     if (!this.db.has(id))
       throw new Error(`${id} not registered!`)
     const doc = this.db.get(id);
-    logv2(doc, 'doc')
+    // logv2(doc, 'doc')
     return doc
   }
 
