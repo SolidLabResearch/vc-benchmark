@@ -7,12 +7,13 @@ export abstract class AbstractImplementation implements IImplementation {
     this.documentLoader = documentLoader;
   }
 
-  abstract derive(vc: any, disclosureDocument: any): Promise<any>
+  abstract derive(vc: any, disclosureDocument: any, challenge?:string): Promise<any>
+  abstract deriveVC?(vc: any, disclosureDocument: any, challenge?:string): Promise<any>
   abstract sign(credential: any, key: any): Promise<any>
   abstract verify(vc: any): Promise<any>
   abstract verifySignedCredential?(vc: any): Promise<any>
   abstract verifyDerivedCredential?(dvc: any): Promise<any>
-  abstract verifyDerived?(d: any): Promise<any>
+  abstract verifyDerived?(d: any, challenge?:string): Promise<any>
 
 
 }

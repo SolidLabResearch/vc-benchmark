@@ -32,5 +32,11 @@ export const credentialSetups: Record<string, ICredentialSetup> = {
     'credential': 'src/resources/credentials/vc03.json',
     'disclosureDocument': 'src/resources/credentials/vc03-disclosure-document.json',
     disclosureFormat: DisclosureFormat.frame
+  },
+
+  'bbs-vc0': {
+    'credential': 'src/resources/bbs-bls-signature-2020/bbs-vc0.json',
+    'disclosureDocument': 'src/resources/bbs-bls-signature-2020/bbs-vc0-disclosure-document.json',
+    disclosureFormat: DisclosureFormat.frame
   }
 }

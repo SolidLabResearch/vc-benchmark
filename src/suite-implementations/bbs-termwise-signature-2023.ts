@@ -4,6 +4,9 @@ import {credential} from "../resources/ed25519-signature-2020/mock-data";
 import * as vm from "node:vm";
 
 export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementation {
+  deriveVC?(vc: any, disclosureDocument: any, challenge?: string): Promise<any> {
+      throw new Error("Method not implemented.");
+  }
   verifySignedCredential?(vc: any): Promise<any> {
       throw new Error("Method not implemented.");
   }

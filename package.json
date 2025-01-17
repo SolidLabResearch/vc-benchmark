@@ -12,7 +12,9 @@
     "start:v2:dev": "npx nodemon --exec npm run start:v2",
     "pseudo": "npm run build && node build/pseudonymous-bbs-signature.js",
     "pseudo:dev": "npx nodemon --exec npx ts-node ./src/pseudonymous-bbs-signature.ts",
-    "impl:bbs-bls-signature-2020:dev": "npx nodemon --exec npx ts-node ./src/suite-implementations/bbs-bls-signature-2020.ts"
+    "impl:bbs-bls-signature-2020:dev": "npx nodemon --exec npx ts-node ./src/suite-implementations/bbs-bls-signature-2020.ts",
+    "scratch": "tsx ./src/scratch.ts",
+    "scratch:dev": "npx nodemon --exec npm run scratch"
   },
   "author": "Gertjan De Mulder (gertjan.demulder@ugent.be)",
   "license": "MIT",

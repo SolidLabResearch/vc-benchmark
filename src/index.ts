@@ -1,12 +1,14 @@
 import {performance} from "node:perf_hooks";
 import * as fs from "node:fs";
 import path from "node:path";
-import {BbsTermwiseSignature2023Experiment, zkpld} from "./experiment";
+import {zkpld} from "./experiment";
 import {readJsonFile} from "./utils/io";
 import {logv2} from "./utils/log";
 import {credentialSetups} from "./credentialSetups";
 import {ICredentialSetup} from "./interfaces";
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
+import {BbsTermwiseSignature2023Experiment} from "./experiment/bbsTermwiseSignature2023Experiment";
+import {BbsBlsSignature2020Experiment} from "./experiment/bbsBlsSignature2020Experiment";
 
 
 const implementationRunners = {
@@ -79,5 +81,25 @@ async function runBatch(n: number) {
 
 // Driver
 
-(new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run().then().catch(console.error)
+// const a =
+const b_vc01 = new BbsBlsSignature2020Experiment(credentialSetups['vc01']) // TODO: verification of derived fails
+const b_own = new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0']) // Works
 
+
+async function runExperimentInstances() {
+  let allOk = true;
+  try {
+    await (new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run()
+    await (new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0'])).run()
+  }
+  catch (err) {
+    allOk = false;
+    console.error(`Error occurred while runExperimentInstances(): ${err}. Details:\n`, err)
+  } finally {
+    if(!allOk)
+      console.error('SOMETHING WENT WRONG in runExperimentInstances()')
+    else
+      console.log('runExperimentInstances() executed without errors! :)')
+  }
+}
+runExperimentInstances().then().catch(console.error)

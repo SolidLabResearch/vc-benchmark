@@ -12,16 +12,23 @@ import {AbstractImplementation} from "./AbstractImplementation";
 import {CONTEXTS} from "../contexts";
 import {credential} from "../resources/ed25519-signature-2020/mock-data";
 import {suite} from "node:test";
+/*
 import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
-import {deriveProof} from "@zkp-ld/jsonld-proofs";
+*/
+
 
 
 type VerifiableCredential = any
 type VerifiablePresentation = any
 export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
-  verifyDerivedCredential(dvc: any): Promise<any> {
-    throw new Error('Not implemented')
-    return Promise.resolve(undefined);
+  async verifyDerivedCredential(dvc: any): Promise<any> {
+    //Verify the derived proof
+    return await jsigs.verify(dvc, {
+      suite: new BbsBlsSignatureProof2020(),
+      purpose: new jsigs.purposes.AssertionProofPurpose(),
+      documentLoader: this.documentLoader
+    });
+
   }
 
   verifySignedCredential(vc: any): Promise<any> {
@@ -97,10 +104,12 @@ export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
    * @param disclosedDocument
    * @param challenge
    */
-  async derive(vc: VerifiableCredential, disclosedDocument: any, challenge: string): Promise<VerifiablePresentation> {
-    const dvc = await this.deriveVC(vc, disclosedDocument)
-    const p = this.createPresentation([vc])
-    return p
+  async derive(vc: VerifiableCredential, disclosedDocument: any): Promise<any> {
+    throw new Error('Needs revision')
+    // const dvc = await this.deriveVC(vc, disclosedDocument)
+    // return dvc;
+    // const p = this.createPresentation([vc])
+    // return p
     // const vp = await this.signPresentation(p, challenge) // TODO: delete (incl. sign Presentation) ??
     // return vp
   }

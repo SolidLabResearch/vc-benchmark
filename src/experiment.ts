@@ -3,7 +3,7 @@ import {
   _Implementation_BbsBlsSignature2020,
   Implementation_BbsBlsSignature2020
 } from "./suite-implementations/bbs-bls-signature-2020";
-import {DisclosureFormat, ICredentialSetup, IImplementation, IRegistry, IVerificationMethod} from "./interfaces";
+import {DisclosureFormat, ICredentialSetup, IRegistry, IVerificationMethod} from "./interfaces";
 import {createDocumentLoader, defaultContexts} from "./documentLoader";
 import {performance} from "node:perf_hooks";
 import assert from "node:assert";
@@ -12,17 +12,15 @@ import {unsignedCredential as unsignedCredentialEcdsaSd2023} from "./resources/e
 import {Implementation_EcdsaSd2023Cryptosuite} from "./suite-implementations/ecdsa-sd-2023-cryptosuite";
 import dataIntegrity from "@digitalbazaar/data-integrity-context";
 import credentialEd25519Signature2020 from "./resources/ed25519-signature-2020/vc.json";
-import {credential, credential as mockCredentialEd25519} from "./resources/ed25519-signature-2020/mock-data";
+import {credential as mockCredentialEd25519} from "./resources/ed25519-signature-2020/mock-data";
 import {Implementation_Ed25519Signature2020} from "./suite-implementations/ed255-signature-2020";
-import credentialBbsTermwiseSignature2023 from "./resources/zkp-ld/vc0.json";
 import keypair from "./resources/zkp-ld/keypair.json";
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
-import disclosed from "./resources/zkp-ld/disclosed0.json";
 import {MyRegistry} from "./MyRegistry";
 import {registerControllerDocumentAtRegistry} from "./helpers";
 import {logv2} from "./utils/log";
 import jsonld from "jsonld";
-import {readJsonFile, writeJsonFile} from "./utils/io";
+import {readJsonFile} from "./utils/io";
 import {AbstractImplementation} from "./suite-implementations/AbstractImplementation";
 
 export const MARKERS = {
@@ -81,74 +79,12 @@ export abstract class AbstractExperiment implements IExperiment {
 
   log(obj:any, tag: string|undefined = undefined) {
     if(!!tag)
-      console.log(`[${this.cryptosuite}] ${tag}`, obj)
+      console.log(`[${this.cryptosuite}] ${tag}`)
     else
-      console.log(`[${this.cryptosuite}]`, obj)
-  }
-}
+      console.log(`[${this.cryptosuite}]`)
 
-export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
+    logv2(obj)
 
-  constructor(credentialSetup: ICredentialSetup) {
-    const cryptosuite = 'bbs-termwise-signature-2023';
-    const ctrImp = Implementation_BbsTermwiseSignature2023
-    super(credentialSetup, cryptosuite, ctrImp);
-  }
-
-  async run(): Promise<any> {
-    const controllerDoc = zkpld.redactControllerDoc(keypair)
-    registerControllerDocumentAtRegistry(controllerDoc, this.r)
-    const dl = createDocumentLoader(defaultContexts, this.r)
-
-    const credential = readJsonFile(this.credentialSetup.credential.toString())
-
-    const imp = new this.ctrImp(dl)
-
-    // Sign VC
-    this.log('>>> SIGN VC')
-    let preprocessedCredential = zkpld.preprocessing.addProofObject(credential)
-    zkpld.preprocessing.updateContext(preprocessedCredential)
-    performance.mark(MARKERS.START_SIGN_VC, this.perfOptions)
-    const vc = await imp.sign(preprocessedCredential, keypair)
-    performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
-    assert(vc.proof.cryptosuite === this.cryptosuite)
-
-    // Derive VC
-    console.log('>>> DERIVE VC')
-
-    // Preprocessing
-    zkpld.preprocessing.addIssuer(vc, controllerDoc.id)
-    let preprocessedDisclosureDocument = klona(this.disclosureDocument) as any
-    zkpld.preprocessing.addIssuer(preprocessedDisclosureDocument, controllerDoc.id)
-    zkpld.preprocessing.updateContext(preprocessedDisclosureDocument)
-
-    /**
-     * TODO: verify that zkpld DOES NOT apply/support JSON-LD Frames? Hence, this has to be done as a prior step?
-     * For example, zkpld throws an error when using the @explicit keyword in the disclosure document.
-     */
-    preprocessedDisclosureDocument = await jsonld.frame(vc, preprocessedDisclosureDocument)
-    zkpld.preprocessing.addProofObject(preprocessedDisclosureDocument)
-
-    logv2(vc, 'vc')
-    logv2(this.disclosureDocument, 'disclosureDocument')
-    logv2(preprocessedDisclosureDocument, 'preprocessedDisclosureDocument')
-    // writeJsonFile('temp.derive-input-vc.json', vc)
-    // writeJsonFile('temp.derive-input-disclosureDocument.json', disclosureDocument)
-
-    performance.mark(MARKERS.START_DERIVE, this.perfOptions)
-    const vp = await imp.derive(vc, preprocessedDisclosureDocument)
-    performance.mark(MARKERS.END_DERIVE, this.perfOptions)
-    logv2(vp, 'vp (derived)')
-
-    // Verify VP with derived VC
-    console.log('>>> VERIFY VP (DERIVED VC)')
-    performance.mark(MARKERS.START_VERIFY_DERIVED, this.perfOptions)
-    const vrDerived = await imp.verifyDerived!(vp)
-    performance.mark(MARKERS.END_VERIFY_DERIVED, this.perfOptions)
-    assert(vrDerived.verified === true)
-    this.log(vrDerived, 'vrDerived')
-    // Clear registry
-    this.r.clear()
   }
 }
 
@@ -279,6 +215,8 @@ export namespace zkpld {
     r.clear()
   }
 }
+
+
 export namespace bbsSignature2020 {
 
   export const cryptosuite: string = 'bbs-bls-signature-2020'
@@ -348,7 +286,6 @@ export namespace bbsSignature2020 {
     // Preprocess VC
     const credential = getCredential()
     const preprocessedCredential = _Implementation_BbsBlsSignature2020.preprocessVC(credential)
-
 
     // Sign VC
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
