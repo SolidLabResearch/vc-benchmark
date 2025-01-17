@@ -10,11 +10,25 @@ import {GenerateKeyPairOptions} from "@zkp-ld/bls12381-key-pair";
 import {AbstractImplementation} from "./AbstractImplementation";
 // import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
 import {CONTEXTS} from "../contexts";
+import {credential} from "../resources/ed25519-signature-2020/mock-data";
+import {suite} from "node:test";
+import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
+import {deriveProof} from "@zkp-ld/jsonld-proofs";
 
 
 type VerifiableCredential = any
 type VerifiablePresentation = any
 export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
+  verifyDerivedCredential(dvc: any): Promise<any> {
+    throw new Error('Not implemented')
+    return Promise.resolve(undefined);
+  }
+
+  verifySignedCredential(vc: any): Promise<any> {
+    throw new Error('Not implemented')
+    return Promise.resolve(undefined);
+  }
+
   async sign(credential: any, key: any): Promise<any> {
     const suite = _Implementation_BbsBlsSignature2020._hack_addEnsureContextFunction(
       new BbsBlsSignature2020({key})

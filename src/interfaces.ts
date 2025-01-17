@@ -1,8 +1,10 @@
+import {PathLike} from "node:fs";
+import {DocumentLoader} from "@zkp-ld/jsonld-proofs";
+
 export interface IRegistry {
+  clear(): void
   register(id: string, doc: object): void
-
   resolve(id: string): object
-
   getIds(): string[]
 }
 
@@ -48,4 +50,17 @@ export interface IDidDocument {
 export interface IImplementation {
   sign(credential: any, key: any): Promise<any>
   verify(vc: any): Promise<any>
+}
+
+export enum DisclosureFormat {
+  custom,
+  frame,
+  jsonpath
+}
+
+export interface ICredentialSetup {
+  credential: PathLike
+  disclosureDocument: PathLike
+  disclosureFormat: DisclosureFormat
+  meta?: any
 }

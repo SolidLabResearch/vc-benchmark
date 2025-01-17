@@ -1,36 +1,14 @@
 import {performance} from "node:perf_hooks";
 import * as fs from "node:fs";
 import path from "node:path";
-import {bbsSignature2020, ecdsaSd2023Cryptosuite, ed25519Signature2020, zkpld} from "./experiment";
+import {BbsTermwiseSignature2023Experiment, zkpld} from "./experiment";
 import {readJsonFile} from "./utils/io";
 import {logv2} from "./utils/log";
+import {credentialSetups} from "./credentialSetups";
+import {ICredentialSetup} from "./interfaces";
+import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
 
 
-const credentialSetups = {
-  'zkpld-vc0': {
-    'credential': 'src/resources/zkp-ld/vc0.json',
-    'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json',
-    'meta': {
-      'note': 'Applying the disclosure document as JSON-LD Frame for the credential will result in errors.'
-    }
-  },
-  'vc00': {
-    'credential': 'src/resources/credentials/vc00.json',
-    'disclosureDocument': 'src/resources/credentials/vc00-disclosure-document.json'
-  },
-  'vc01': {
-    'credential': 'src/resources/credentials/vc01.json',
-    'disclosureDocument': 'src/resources/credentials/vc01-disclosure-document.json'
-  },
-  'vc03': {
-    'meta': {
-      'credential': { 'source': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/vc3.json' },
-      'disclosureDocument': {'source': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/disclosed3.json'},
-    },
-    'credential': 'src/resources/credentials/vc03.json',
-    'disclosureDocument': 'src/resources/credentials/vc03-disclosure-document.json'
-  }
-}
 const implementationRunners = {
   async *[Symbol.asyncIterator]() {
     // bbs-termwise-signature 2023 with original test credential setup
@@ -50,8 +28,8 @@ async function runBatch(n: number) {
   let errors = []
   for await (const {i, credential: cPath, disclosureDocument: dPath} of implementationRunners) {
 
-    const credential = readJsonFile(cPath)
-    const disclosureDocument = readJsonFile(dPath)
+    const credential = readJsonFile(cPath.toString())
+    const disclosureDocument = readJsonFile(dPath.toString())
     logv2(credential, 'credential')
     logv2(disclosureDocument, 'disclosureDocument')
     console.log(`
@@ -100,5 +78,6 @@ async function runBatch(n: number) {
 }
 
 // Driver
-const batchSize = 1
-runBatch(batchSize).then().catch(console.error)
+
+(new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run().then().catch(console.error)
+
