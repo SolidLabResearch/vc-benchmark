@@ -87,7 +87,7 @@ async function runExperimentInstances() {
     await (new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run() // Works
     await (new BbsBlsSignature2020Experiment(credentialSetups['vc01'])).run() // Works
     await (new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0'])).run() // Works
-    // await (new BbsTermwiseSignature2023Experiment(credentialSetups['bbs-vc0'])).run() // TODO: WIP
+    await (new BbsTermwiseSignature2023Experiment(credentialSetups['bbs-vc0'])).run() // TODO: WIP
   }
   catch (err) {
     allOk = false;
