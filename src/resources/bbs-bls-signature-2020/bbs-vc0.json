@@ -4,7 +4,7 @@
     "https://w3id.org/security/bbs/v1",
     "https://w3id.org/citizenship/v1"
   ],
-  "id": "urn:vc:01",
+  "id": "urn:vc:bbs-vc0",
   "type": [
     "VerifiableCredential"
   ],

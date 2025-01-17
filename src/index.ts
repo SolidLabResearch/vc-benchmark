@@ -81,16 +81,13 @@ async function runBatch(n: number) {
 
 // Driver
 
-// const a =
-const b_vc01 = new BbsBlsSignature2020Experiment(credentialSetups['vc01']) // TODO: verification of derived fails
-const b_own = new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0']) // Works
-
-
 async function runExperimentInstances() {
   let allOk = true;
   try {
-    await (new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run()
-    await (new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0'])).run()
+    await (new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run() // Works
+    await (new BbsBlsSignature2020Experiment(credentialSetups['vc01'])).run() // Works
+    // await (new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0'])).run() // Works
+    // await (new BbsTermwiseSignature2023Experiment(credentialSetups['bbs-vc0'])).run() // TODO: WIP
   }
   catch (err) {
     allOk = false;
