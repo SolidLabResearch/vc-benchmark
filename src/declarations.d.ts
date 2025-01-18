@@ -22,3 +22,6 @@ declare module 'react-native-keychain';
 declare module '@digitalcredentials/open-badges-context';
 declare module '@digitalcredentials/credentials-v2-context';
 declare module '@digitalcredentials/http-client';
+declare module "@digitalbazaar/data-integrity";
+declare module '@digitalbazaar/ecdsa-multikey';
+declare module "@digitalbazaar/ecdsa-sd-2023-cryptosuite";

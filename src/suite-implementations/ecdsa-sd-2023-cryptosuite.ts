@@ -1,14 +1,23 @@
 import {AbstractImplementation} from "./AbstractImplementation";
 import {DataIntegrityProof} from "@digitalbazaar/data-integrity";
-import * as ecdsaSd2023Cryptosuite from '@digitalbazaar/ecdsa-sd-2023-cryptosuite';
 import * as EcdsaMultikey from '@digitalbazaar/ecdsa-multikey';
+// @ts-ignore
 import jsigs from 'jsonld-signatures-v11-2-1';
 import {klona} from "klona";
+import * as ecdsaSd2023Cryptosuite from '@digitalbazaar/ecdsa-sd-2023-cryptosuite';
 
 
 export class Implementation_EcdsaSd2023Cryptosuite
 extends AbstractImplementation
 {
+  deriveVC(vc: any, disclosureDocument: any, challenge?: string): Promise<any> {
+    return Promise.resolve(undefined);
+  }
+
+  verifyDerived(d: any, challenge?: string): Promise<any> {
+    return Promise.resolve(undefined);
+  }
+
   verifyDerivedCredential?(dvc: any): Promise<any> {
       throw new Error("Method not implemented.");
   }
