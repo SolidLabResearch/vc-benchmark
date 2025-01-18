@@ -37,6 +37,8 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
     assert(vc.proof.cryptosuite === this.cryptosuite)
 
+    // TODO: VERIFY VC?
+
     // Derive VC
     console.log('>>> DERIVE VC')
 
