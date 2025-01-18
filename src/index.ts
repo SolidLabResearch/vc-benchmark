@@ -9,6 +9,7 @@ import {ICredentialSetup} from "./interfaces";
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
 import {BbsTermwiseSignature2023Experiment} from "./experiment/bbsTermwiseSignature2023Experiment";
 import {BbsBlsSignature2020Experiment} from "./experiment/bbsBlsSignature2020Experiment";
+import {Ed25519Signature2020Experiment} from "./experiment/Ed25519Signature2020Experiment";
 
 
 const implementationRunners = {
@@ -84,10 +85,16 @@ async function runBatch(n: number) {
 async function runExperimentInstances() {
   let allOk = true;
   try {
-    await (new BbsTermwiseSignature2023Experiment(credentialSetups['vc01'])).run() // Works
-    await (new BbsBlsSignature2020Experiment(credentialSetups['vc01'])).run() // Works
-    await (new BbsBlsSignature2020Experiment(credentialSetups['bbs-vc0'])).run() // Works
-    await (new BbsTermwiseSignature2023Experiment(credentialSetups['bbs-vc0'])).run() // TODO: WIP
+    let csi = 'vc01';
+    await (new BbsBlsSignature2020Experiment(credentialSetups[csi])).run() // Works
+    await (new BbsTermwiseSignature2023Experiment(credentialSetups[csi])).run() // Works
+    await (new Ed25519Signature2020Experiment(credentialSetups[csi])).run() // Works
+
+    // TODO: ecdsa-sd-2023
+
+    csi = 'bbs-vc0'
+    // await (new BbsBlsSignature2020Experiment(credentialSetups[csi])).run() // Works
+    // await (new BbsTermwiseSignature2023Experiment(credentialSetups[csi])).run() // TODO: fix RDFProofsError(BBSPlus(InvalidSignature))
   }
   catch (err) {
     allOk = false;

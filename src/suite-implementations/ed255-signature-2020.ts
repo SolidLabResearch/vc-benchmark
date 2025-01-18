@@ -7,10 +7,47 @@ import {Ed25519Signature2020, suiteContext} from '@digitalbazaar/ed25519-signatu
 // @ts-ignore
 import jsigs from 'jsonld-signatures-v9-0-0';
 import {klona} from "klona";
-import {logv2} from "../utils/log";
+import {AbstractImplementation} from "./AbstractImplementation";
 
-export namespace Implementation_Ed25519Signature2020 {
+export class Implementation_Ed25519Signature2020 extends AbstractImplementation {
 
+  async derive(vc: any, disclosureDocument: any): Promise<any> {
+    throw new Error(`Ed25519Signature2020 does NOT support selective disclosure functionality`)
+  }
+
+  deriveVC(vc: any, disclosureDocument: any, challenge?: string): Promise<any> {
+    throw new Error(`Ed25519Signature2020 does NOT support selective disclosure functionality`)
+  }
+
+  async sign(credential: any, key: any): Promise<any> {
+    return await _Implementation_Ed25519Signature2020.sign(credential, key, this.documentLoader)
+  }
+
+  async verify(vc: any): Promise<any> {
+    return await _Implementation_Ed25519Signature2020.verifySignedCredential(vc,  this.documentLoader)
+  }
+
+  verifyDerived(d: any, challenge?: string): Promise<any> {
+    throw new Error(`Ed25519Signature2020 does NOT support selective disclosure functionality`)
+  }
+
+  verifyDerivedCredential(dvc: any): Promise<any> {
+    throw new Error(`Ed25519Signature2020 does NOT support selective disclosure functionality`)
+  }
+
+  verifySignedCredential(vc: any): Promise<any> {
+    return Promise.resolve(undefined);
+  }
+
+}
+
+export namespace _Implementation_Ed25519Signature2020 {
+
+  export const contextsToInclude = [
+    'https://www.w3.org/2018/credentials/v1',
+    'https://www.w3.org/ns/did/v1',
+    'https://w3id.org/security/suites/ed25519-2020/v1',
+  ]
 
   /**
    * TODO: safe delete

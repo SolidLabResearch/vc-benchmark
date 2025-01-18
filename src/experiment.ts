@@ -13,7 +13,7 @@ import {Implementation_EcdsaSd2023Cryptosuite} from "./suite-implementations/ecd
 import dataIntegrity from "@digitalbazaar/data-integrity-context";
 import credentialEd25519Signature2020 from "./resources/ed25519-signature-2020/vc.json";
 import {credential as mockCredentialEd25519} from "./resources/ed25519-signature-2020/mock-data";
-import {Implementation_Ed25519Signature2020} from "./suite-implementations/ed255-signature-2020";
+import {_Implementation_Ed25519Signature2020} from "./suite-implementations/ed255-signature-2020";
 import keypair from "./resources/zkp-ld/keypair.json";
 import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
 import {MyRegistry} from "./MyRegistry";
@@ -317,6 +317,7 @@ export namespace bbsSignature2020 {
   }
 
 }
+
 export namespace ed25519Signature2020 {
 
   export const cryptosuite: string = 'ed25519-signature-2023'
@@ -354,7 +355,7 @@ export namespace ed25519Signature2020 {
 
     // Create keypair
     // const kp = await Implementation_Ed25519Signature2020.createKeypair(controller, seedString)
-    const kp = await Implementation_Ed25519Signature2020.createKeypairV2(controller)
+    const kp = await _Implementation_Ed25519Signature2020.createKeypairV2(controller)
 
     const vm = {
       id: kp.id!,
@@ -383,16 +384,16 @@ export namespace ed25519Signature2020 {
 
     // VC: preprocess
     const credential = ed25519Signature2020.getMockCredential()
-    const preprocessedCredential = Implementation_Ed25519Signature2020.preprocessVC(credential)
+    const preprocessedCredential = _Implementation_Ed25519Signature2020.preprocessVC(credential)
 
     console.log('>>> SIGN VC')
     performance.mark(MARKERS.START_SIGN_VC, perfOptions)
-    const vc = await Implementation_Ed25519Signature2020.sign(preprocessedCredential, kp, dl)
+    const vc = await _Implementation_Ed25519Signature2020.sign(preprocessedCredential, kp, dl)
     performance.mark(MARKERS.END_SIGN_VC, perfOptions)
 
     console.log('>>> VERIFY VC')
     performance.mark(MARKERS.START_VERIFY_VC, perfOptions)
-    const verificationResult = await Implementation_Ed25519Signature2020.verifySignedCredential(vc, dl)
+    const verificationResult = await _Implementation_Ed25519Signature2020.verifySignedCredential(vc, dl)
     performance.mark(MARKERS.END_VERIFY_VC, perfOptions)
     assert(verificationResult.verified === true)
 
