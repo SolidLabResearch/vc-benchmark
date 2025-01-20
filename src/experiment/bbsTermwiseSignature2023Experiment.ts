@@ -37,8 +37,13 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
     const vc = await imp.sign(preprocessedCredential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
     assert(vc.proof.cryptosuite === this.cryptosuite)
-
-    // TODO: VERIFY VC?
+    
+    // Verify VC
+    console.log('>>> VERIFY VC')
+    performance.mark(MARKERS.START_VERIFY_VC, this.perfOptions)
+    const verificationResult = await imp.verify(vc)
+    performance.mark(MARKERS.END_VERIFY_VC, this.perfOptions)
+    assert(verificationResult.verified === true)
 
     // Derive VC
     console.log('>>> DERIVE VC')
