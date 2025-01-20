@@ -1,6 +1,5 @@
 import {DisclosureFormat, ICredentialSetup} from "./interfaces";
-
-export const credentialSetups: Record<string, ICredentialSetup> = {
+const _credentialSetups = {
   'zkpld-vc0': {
     'credential': 'src/resources/zkp-ld/vc0.json',
     'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json',
@@ -40,3 +39,7 @@ export const credentialSetups: Record<string, ICredentialSetup> = {
     disclosureFormat: DisclosureFormat.frame
   }
 }
+export const credentialSetups: Record<string, ICredentialSetup> = Object.fromEntries(
+  Object.entries(_credentialSetups)
+    .map(([key, value]) => [key, {key, ...value}])
+)

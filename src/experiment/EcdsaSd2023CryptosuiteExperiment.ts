@@ -1,4 +1,4 @@
-import {AbstractExperiment, MARKERS} from "../experiment";
+import {MARKERS} from "../experiment";
 import {ICredentialSetup, IVerificationMethod} from "../interfaces";
 import {Implementation_EcdsaSd2023Cryptosuite} from "../suite-implementations/ecdsa-sd-2023-cryptosuite";
 import {createDocumentLoader, defaultContexts} from "../documentLoader";
@@ -7,6 +7,7 @@ import {performance} from "node:perf_hooks";
 import assert from "node:assert";
 import {readJsonFile} from "../utils/io";
 import {frameToJsonPointers} from "../utils/json";
+import {AbstractExperiment} from "./AbstractExperiment";
 
 
 export class EcdsaSd2023CryptosuiteExperiment extends AbstractExperiment {
@@ -15,7 +16,7 @@ export class EcdsaSd2023CryptosuiteExperiment extends AbstractExperiment {
     super(credentialSetup, 'ecdsa-sd-2023-cryptosuite', Implementation_EcdsaSd2023Cryptosuite);
   }
 
-  async run(): Promise<any> {
+  async _run(): Promise<any> {
     const controller = 'did:example:test-ecdsa-sd-2023';
         // Keypair
     const kp = await Implementation_EcdsaSd2023Cryptosuite.createKeypair(controller)

@@ -5,8 +5,7 @@ import {zkpld} from "./experiment";
 import {readJsonFile} from "./utils/io";
 import {logv2} from "./utils/log";
 import {credentialSetups} from "./credentialSetups";
-import {ICredentialSetup} from "./interfaces";
-import {Implementation_BbsTermwiseSignature2023} from "./suite-implementations/bbs-termwise-signature-2023";
+import {ICredentialSetup, IRunResult, SubclassOfAbstractExperiment} from "./interfaces";
 import {BbsTermwiseSignature2023Experiment} from "./experiment/bbsTermwiseSignature2023Experiment";
 import {BbsBlsSignature2020Experiment} from "./experiment/bbsBlsSignature2020Experiment";
 import {Ed25519Signature2020Experiment} from "./experiment/Ed25519Signature2020Experiment";
@@ -87,10 +86,10 @@ async function runExperimentInstances() {
   let allOk = true;
   try {
     let csi = 'vc01';
-    await (new BbsBlsSignature2020Experiment(credentialSetups[csi])).run() // Works
-    await (new BbsTermwiseSignature2023Experiment(credentialSetups[csi])).run() // Works
-    await (new Ed25519Signature2020Experiment(credentialSetups[csi])).run() // Works
-    await (new EcdsaSd2023CryptosuiteExperiment(credentialSetups[csi])).run() // Works
+    await (new BbsBlsSignature2020Experiment(credentialSetups[csi]))._run() // Works
+    await (new BbsTermwiseSignature2023Experiment(credentialSetups[csi]))._run() // Works
+    await (new Ed25519Signature2020Experiment(credentialSetups[csi]))._run() // Works
+    await (new EcdsaSd2023CryptosuiteExperiment(credentialSetups[csi]))._run() // Works
   }
   catch (err) {
     allOk = false;
@@ -102,4 +101,69 @@ async function runExperimentInstances() {
       console.log('runExperimentInstances() executed without errors! :)')
   }
 }
-runExperimentInstances().then().catch(console.error)
+// runExperimentInstances().then().catch(console.error)
+
+/**
+ *
+ * @param experimentCtrs: a subclass of AbstractExperiment (i.e. concrete experiment)
+ * @param credentialSetupKey: a string referring to the credential setup to be used (i.e., which credential serves as input, as well the disclosure document.
+ */
+async function runExperiments(
+  experimentCtrs: SubclassOfAbstractExperiment<any>[],
+  credentialSetup: ICredentialSetup,
+  n: number
+) {
+  const errors = []
+  const rrRecords: IRunResult[] = []
+  for(let i = 0; i < n; i++) {
+    // For each experiment constructor (ectr)
+    for await (const ectr of experimentCtrs) {
+      try {
+        // Run new experiment instance and receive the run results.
+        let rr: IRunResult = await ((new ectr(credentialSetup)).run())
+        rr.iteration = i
+        rrRecords.push(rr)
+      }
+      catch (err) {
+        console.log(`ERROR while running following experiment: ${ectr.name}`)
+        console.log(err)
+        errors.push({
+          error: err,
+          experiment: ectr.name,
+          iteration: i,
+          credentialSetupKey: credentialSetup.key
+        })
+      }
+    }
+  }
+
+  // Write errors to file.
+  if (errors.length > 0) {
+    console.error(`A total of ${errors.length} errors occurred!`)
+    fs.writeFileSync(path.join('data', 'errors.json'), JSON.stringify(errors))
+  } else {
+    console.log('No errors occurred!')
+  }
+
+  // Export result records
+  fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(rrRecords))
+
+}
+
+const experimentConstructors = [
+  BbsBlsSignature2020Experiment,
+  BbsTermwiseSignature2023Experiment,
+  Ed25519Signature2020Experiment,
+  EcdsaSd2023CryptosuiteExperiment
+]
+const cski = 'vc01'
+const csi = credentialSetups[cski]
+const n = 39
+console.log(
+  `Running experiments with parameters:
+    implementations:\n\t${experimentConstructors.map(c => c.name).join('\n\t')}
+    credentialSetup: ${cski}
+    n. iterations: ${n}
+  `)
+runExperiments(experimentConstructors, csi, n)
+  .then().catch(console.error)

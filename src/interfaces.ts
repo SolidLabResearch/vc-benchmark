@@ -1,5 +1,9 @@
 import {PathLike} from "node:fs";
-import {DocumentLoader} from "@zkp-ld/jsonld-proofs";
+import {AbstractImplementation} from "./suite-implementations/AbstractImplementation";
+
+import {AbstractExperiment} from "./experiment/AbstractExperiment";
+import {PerformanceEntry} from "node:perf_hooks";
+import {IPerformanceOptions} from "./experiment";
 
 export interface IRegistry {
   clear(): void
@@ -59,8 +63,33 @@ export enum DisclosureFormat {
 }
 
 export interface ICredentialSetup {
+  key: string
   credential: PathLike
   disclosureDocument: PathLike
   disclosureFormat: DisclosureFormat
   meta?: any
+}
+
+export type ConcreteImplementationConstructor = new (...args: any[]) => AbstractImplementation;
+
+export type SubclassOfAbstractExperiment<T extends AbstractExperiment> = new (...args: any[]) => T;
+
+export interface IRunResult {
+  records: PerformanceEntry[]
+  nRecords: number
+  cryptosuite: string
+  implementationClass: string
+  iteration?: number
+  credentialSetupKey: string
+}
+
+export interface IExperiment {
+  cryptosuite: string
+  credentialSetup: ICredentialSetup
+  r: IRegistry
+  ctrImp: ConcreteImplementationConstructor
+
+  run: () => Promise<IRunResult>
+  _run: () => Promise<any>;
+  perfOptions: IPerformanceOptions
 }

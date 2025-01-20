@@ -7,7 +7,8 @@ import {createDocumentLoader, defaultContexts} from "../documentLoader";
 import {readJsonFile, writeJsonFile} from "../utils/io";
 import {performance} from "node:perf_hooks";
 import assert from "node:assert";
-import {AbstractExperiment, bbsSignature2020, MARKERS} from "../experiment";
+import {bbsSignature2020, MARKERS} from "../experiment";
+import {AbstractExperiment} from "./AbstractExperiment";
 
 export class BbsBlsSignature2020Experiment extends AbstractExperiment {
 
@@ -17,7 +18,7 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
     super(credentialSetup, cryptosuite, ctrImp);
   }
 
-  async run(): Promise<any> {
+  async _run(): Promise<any> {
     // Create issuer keypair
     const controller: string = 'did:example:test-bbs-signature-2020'
     const kp = await _Implementation_BbsBlsSignature2020.createKeypair({

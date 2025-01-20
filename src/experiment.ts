@@ -3,7 +3,7 @@ import {
   _Implementation_BbsBlsSignature2020,
   Implementation_BbsBlsSignature2020
 } from "./suite-implementations/bbs-bls-signature-2020";
-import {DisclosureFormat, ICredentialSetup, IRegistry, IVerificationMethod} from "./interfaces";
+import {IVerificationMethod} from "./interfaces";
 import {createDocumentLoader, defaultContexts} from "./documentLoader";
 import {performance} from "node:perf_hooks";
 import assert from "node:assert";
@@ -20,8 +20,6 @@ import {MyRegistry} from "./MyRegistry";
 import {registerControllerDocumentAtRegistry} from "./helpers";
 import {logv2} from "./utils/log";
 import jsonld from "jsonld";
-import {readJsonFile} from "./utils/io";
-import {AbstractImplementation} from "./suite-implementations/AbstractImplementation";
 
 export const MARKERS = {
   START_SIGN_VC: 'START_SIGN_VC',
@@ -34,57 +32,9 @@ export const MARKERS = {
   END_VERIFY_DERIVED: 'END_VERIFY_DERIVED',
 }
 
-export type ConcreteImplementationConstructor = new (...args: any[]) => AbstractImplementation;
-export interface IExperiment {
-  cryptosuite: string
-  credentialSetup: ICredentialSetup
-  r: IRegistry
-  ctrImp: ConcreteImplementationConstructor
-
-  run: () => Promise<any>;
-  perfOptions: IPerformanceOptions
-}
 export interface IPerformanceOptions {
   detail: {
     implementation: string
-  }
-}
-
-export abstract class AbstractExperiment implements IExperiment {
-  credentialSetup: ICredentialSetup;
-  public cryptosuite: string;
-  r: IRegistry;
-  ctrImp: ConcreteImplementationConstructor;
-  perfOptions: IPerformanceOptions;
-  credential: any
-  disclosureDocument: any
-  disclosureFormat: DisclosureFormat
-
-  constructor(credentialSetup: ICredentialSetup, cryptosuite: string, ctrImp: ConcreteImplementationConstructor) {
-    this.credentialSetup = credentialSetup;
-    this.credential = readJsonFile(credentialSetup.credential.toString())
-    this.disclosureDocument = readJsonFile(credentialSetup.disclosureDocument.toString())
-    this.disclosureFormat = credentialSetup.disclosureFormat
-    this.cryptosuite = cryptosuite;
-    this.r = new MyRegistry()
-    this.ctrImp = ctrImp;
-    this.perfOptions = {
-      detail: {
-        implementation: this.cryptosuite
-      }
-    }
-  }
-
-  abstract run(): Promise<any>;
-
-  log(obj:any, tag: string|undefined = undefined) {
-    if(!!tag)
-      console.log(`[${this.cryptosuite}] ${tag}`)
-    else
-      console.log(`[${this.cryptosuite}]`)
-
-    logv2(obj)
-
   }
 }
 

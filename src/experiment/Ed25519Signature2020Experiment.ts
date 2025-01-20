@@ -3,18 +3,19 @@ import {
   _Implementation_Ed25519Signature2020,
   Implementation_Ed25519Signature2020
 } from "../suite-implementations/ed255-signature-2020";
-import {AbstractExperiment, MARKERS} from "../experiment";
+import {MARKERS} from "../experiment";
 import {createDocumentLoader, defaultContexts} from "../documentLoader";
 import {readJsonFile} from "../utils/io";
 import {performance} from "node:perf_hooks";
 import assert from "node:assert";
+import {AbstractExperiment} from "./AbstractExperiment";
 
 export class Ed25519Signature2020Experiment extends AbstractExperiment {
   constructor(credentialSetup: ICredentialSetup) {
     super(credentialSetup, 'ed25519-signature-2020', Implementation_Ed25519Signature2020);
   }
 
-  async run(): Promise<any> {
+  async _run(): Promise<any> {
     const controller = 'did:example:test-ed25519-signature-2020'
 
     // Create keypair

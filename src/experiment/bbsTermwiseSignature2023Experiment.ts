@@ -9,7 +9,8 @@ import assert from "node:assert";
 import {klona} from "klona";
 import jsonld from "jsonld";
 import {logv2} from "../utils/log";
-import {AbstractExperiment, MARKERS, zkpld} from "../experiment";
+import {MARKERS, zkpld} from "../experiment";
+import {AbstractExperiment} from "./AbstractExperiment";
 
 export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
 
@@ -19,7 +20,7 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
     super(credentialSetup, cryptosuite, ctrImp);
   }
 
-  async run(): Promise<any> {
+  async _run(): Promise<any> {
     const controllerDoc = zkpld.redactControllerDoc(keypair)
     registerControllerDocumentAtRegistry(controllerDoc, this.r)
     const dl = createDocumentLoader(defaultContexts, this.r)
