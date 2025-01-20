@@ -1,7 +1,8 @@
 import {
   ConcreteImplementationConstructor,
   DisclosureFormat,
-  ICredentialSetup, IExperiment,
+  ICredentialSetup,
+  IExperiment,
   IRegistry,
   IRunResult
 } from "../interfaces";
@@ -9,6 +10,8 @@ import {readJsonFile} from "../utils/io";
 import {MyRegistry} from "../MyRegistry";
 import {logv2} from "../utils/log";
 import {IPerformanceOptions} from "../experiment";
+import path from "node:path";
+import fs from 'fs'
 
 export abstract class AbstractExperiment implements IExperiment {
   credentialSetup: ICredentialSetup;
@@ -58,6 +61,13 @@ export abstract class AbstractExperiment implements IExperiment {
       console.log(`[${this.cryptosuite}]`)
 
     logv2(obj)
+  }
 
+  exportObject(obj: any, tag: string): any {
+    const outputDir = path.resolve('temp', 'output', this.cryptosuite)
+    const fpathExport = path.resolve(outputDir, `${tag}.json`)
+    this.log(fpathExport, '[EXPORT]')
+    fs.mkdirSync(outputDir, { recursive: true })
+    fs.writeFileSync(fpathExport, JSON.stringify(obj, null, 2))
   }
 }
