@@ -158,12 +158,13 @@ const experimentConstructors = [
 ]
 const cski = 'vc01'
 const csi = credentialSetups[cski]
-const n = 39
+const n = 150
 console.log(
   `Running experiments with parameters:
     implementations:\n\t${experimentConstructors.map(c => c.name).join('\n\t')}
     credentialSetup: ${cski}
     n. iterations: ${n}
   `)
+
 runExperiments(experimentConstructors, csi, n)
   .then().catch(console.error)
