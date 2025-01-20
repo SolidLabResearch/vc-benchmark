@@ -21,6 +21,18 @@ const _credentialSetups = {
     disclosureFormat: DisclosureFormat.frame
   },
 
+  'vc02': {
+    'credential': 'src/resources/credentials/vc02.json',
+    'disclosureDocument': 'src/resources/credentials/vc02-disclosure-document.json',
+    disclosureFormat: DisclosureFormat.custom,
+    'meta': {
+      'sources': {
+        'credential': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/vc2.json',
+        'disclosureDocument': 'https://github.com/zkp-ld/jsonld-proofs/blob/main/tests/example/disclosed2.json'
+      }
+    },
+  },
+
   'vc03': {
     'meta': {
       'sources': {
