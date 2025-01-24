@@ -156,7 +156,7 @@ const experimentConstructors = [
   Ed25519Signature2020Experiment,
   EcdsaSd2023CryptosuiteExperiment
 ]
-const cski = 'vc01'
+const cski = 'vc02'
 const csi = credentialSetups[cski]
 const n = 150
 console.log(
