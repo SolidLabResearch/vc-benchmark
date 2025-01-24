@@ -79,7 +79,8 @@ export class EcdsaSd2023CryptosuiteExperiment extends AbstractExperiment {
     // Transform JSON-LD Frame disclosure document to JSON Pointers and confine to pointers within the credentialSubject
     const selectivePointers = frameToJsonPointers(disclosureDocument)
       .filter(sp => sp.includes('/credentialSubject/'))
-
+      .filter(sp => !sp.includes('@type'))
+      .filter(sp => !sp.includes('@value'))
 
     this.log(selectivePointers, 'selective (json) pointers')
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
