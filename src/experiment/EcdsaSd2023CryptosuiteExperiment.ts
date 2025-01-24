@@ -64,6 +64,7 @@ export class EcdsaSd2023CryptosuiteExperiment extends AbstractExperiment {
     performance.mark(MARKERS.START_SIGN_VC, this.perfOptions)
     const signedCredential = await impl.sign(credential, kp)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
+    this.exportObject(signedCredential, 'vc')
 
     // Verify signed credential
     this.log('>>> VERIFY VC')
@@ -81,11 +82,12 @@ export class EcdsaSd2023CryptosuiteExperiment extends AbstractExperiment {
       .filter(sp => sp.includes('/credentialSubject/'))
       .filter(sp => !sp.includes('@type'))
       .filter(sp => !sp.includes('@value'))
+    this.exportObject(selectivePointers, 'preprocessedDisclosureDocument')
 
-    this.log(selectivePointers, 'selective (json) pointers')
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
     const derivedCredential = await impl.derive(signedCredential, selectivePointers)
     performance.mark(MARKERS.END_DERIVE, this.perfOptions)
+    this.exportObject(derivedCredential, 'dvc')
 
     // Verify (derived) credential
     performance.mark(MARKERS.START_VERIFY_DERIVED, this.perfOptions)

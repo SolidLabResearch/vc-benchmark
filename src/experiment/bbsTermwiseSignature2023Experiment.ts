@@ -37,7 +37,8 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
     const vc = await imp.sign(preprocessedCredential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
     assert(vc.proof.cryptosuite === this.cryptosuite)
-    
+    this.exportObject(vc, 'vc')
+
     // Verify VC
     console.log('>>> VERIFY VC')
     performance.mark(MARKERS.START_VERIFY_VC, this.perfOptions)
@@ -47,7 +48,6 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
 
     // Derive VC
     console.log('>>> DERIVE VC')
-
     // Preprocessing
     zkpld.preprocessing.addIssuer(vc, controllerDoc.id)
     let preprocessedDisclosureDocument = klona(this.disclosureDocument) as any
@@ -58,19 +58,14 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
      * TODO: verify that zkpld DOES NOT apply/support JSON-LD Frames? Hence, this has to be done as a prior step?
      * For example, zkpld throws an error when using the @explicit keyword in the disclosure document.
      */
-    preprocessedDisclosureDocument = await jsonld.frame(vc, preprocessedDisclosureDocument)
+    preprocessedDisclosureDocument = await jsonld.frame(vc, preprocessedDisclosureDocument, {documentLoader: dl});
     zkpld.preprocessing.addProofObject(preprocessedDisclosureDocument)
-
-    logv2(vc, 'vc')
-    logv2(this.disclosureDocument, 'disclosureDocument')
-    logv2(preprocessedDisclosureDocument, 'preprocessedDisclosureDocument')
-    // writeJsonFile('temp.derive-input-vc.json', vc)
-    // writeJsonFile('temp.derive-input-disclosureDocument.json', disclosureDocument)
+    this.exportObject(preprocessedDisclosureDocument, 'preprocessedDisclosureDocument')
 
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
     const vp = await imp.derive(vc, preprocessedDisclosureDocument)
     performance.mark(MARKERS.END_DERIVE, this.perfOptions)
-    logv2(vp, 'vp (derived)')
+    this.exportObject(vp, 'dvp')
 
     // Verify VP with derived VC
     console.log('>>> VERIFY VP (DERIVED VC)')
@@ -78,7 +73,8 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
     const vrDerived = await imp.verifyDerived!(vp)
     performance.mark(MARKERS.END_VERIFY_DERIVED, this.perfOptions)
     assert(vrDerived.verified === true)
-    this.log(vrDerived, 'vrDerived')
+    this.exportObject(vrDerived, 'vrDerived')
+
     // Clear registry
     this.r.clear()
   }

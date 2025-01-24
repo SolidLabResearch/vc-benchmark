@@ -1,4 +1,4 @@
-import {ICredentialSetup, IVerificationMethod} from "../interfaces";
+import {DisclosureFormat, ICredentialSetup, IVerificationMethod} from "../interfaces";
 import {
   _Implementation_BbsBlsSignature2020,
   Implementation_BbsBlsSignature2020
@@ -9,6 +9,8 @@ import {performance} from "node:perf_hooks";
 import assert from "node:assert";
 import {bbsSignature2020, MARKERS} from "../experiment";
 import {AbstractExperiment} from "./AbstractExperiment";
+import {getNestedAttribute, matchVariableAssignments, setNestedAttribute} from "../utils/json";
+import {logv2} from "../utils/log";
 
 export class BbsBlsSignature2020Experiment extends AbstractExperiment {
 
@@ -61,20 +63,19 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
     this.log(credential, 'credential')
     let preprocessedCredential = _Implementation_BbsBlsSignature2020.preprocessVC(credential)
     preprocessedCredential['issuer'] = controller
-    this.log(preprocessedCredential, 'preprocessedCredential')
+    this.exportObject(preprocessedCredential, 'preprocessedCredential')
 
     // Sign VC
     performance.mark(MARKERS.START_SIGN_VC, this.perfOptions)
     const vc = await imp.sign(preprocessedCredential, kp)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
-    this.log(vc, 'VC')
+    this.exportObject(vc, 'vc')
 
     // Verify VC
     performance.mark(MARKERS.START_VERIFY_VC, this.perfOptions)
     const verificationResult = await imp.verify(vc)
     performance.mark(MARKERS.END_VERIFY_VC, this.perfOptions)
     assert(verificationResult.verified === true)
-    this.log(verificationResult, 'verification result (VC)')
 
     // Derive VC
     this.log('>>> DERIVE VC')
@@ -87,29 +88,28 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
       preprocessedDisclosed['@context'].push('https://w3id.org/security/bbs/v1');
     // This crypto suite does NOT require a minimal proof object
     delete preprocessedDisclosed['proof']
-    this.log(preprocessedDisclosed, 'preprocessedDisclosureDocument')
+
+    this.exportObject(preprocessedDisclosed, 'preprocessedDisclosureDocument')
+
 
 
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
     let dvc = await imp.deriveVC!(vc, preprocessedDisclosed,)
     performance.mark(MARKERS.END_DERIVE, this.perfOptions)
-    this.log(dvc, 'dvc')
+    this.exportObject(dvc, 'dvc')
 
     this.log('>>> VERIFY DERIVED VC')
     performance.mark(MARKERS.START_VERIFY_DERIVED, this.perfOptions)
     // const vrDerived = await (imp as Implementation_BbsBlsSignature2020).verifyDerived(dvc)
     const vrDerived = await imp.verifyDerivedCredential!(dvc)
     performance.mark(MARKERS.END_VERIFY_DERIVED, this.perfOptions)
-    if (vrDerived.verified === false)
-      writeJsonFile(`temp.vrDerived-${this.cryptosuite}.json`, {vrDerived, date: Date.now()})
+    this.exportObject(vrDerived, 'vrDerived')
 
-    this.log(vrDerived, 'vrDerived')
     assert(vrDerived.verified === true)
 
-    // Clear registery
+    // Clear registry
     this.r.clear()
-    /////
-    return Promise.resolve(undefined);
+
   }
 
 }
