@@ -38,6 +38,7 @@
     "@mattrglobal/jsonld-signatures-bbs": "^1.2.0",
     "@zkp-ld/bls12381-key-pair": "^0.8.0",
     "@zkp-ld/jsonld-proofs": "^0.14.0",
+    "json-tree-walker": "^1.1.4",
     "jsonld": "^8.3.2",
     "jsonld-document-loader": "^2.2.0",
     "jsonld-signatures": "7.0.0",
