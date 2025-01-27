@@ -10,7 +10,11 @@ import ed25519_2020_v1 from './contexts/ed25519-2020-v1.json';
 import security_v1 from './contexts/security-v1.json'
 import security_v2 from './contexts/security-v2.json'
 import citizenship_v1 from './contexts/citizenship-v1.json'
+import vdl_v1 from './contexts/vdl-v1.json'
+import amvaa_v1 from './contexts/aamva-v1.json'
+
 export const DATA_INTEGRITY_CONTEXT = 'https://www.w3.org/ns/data-integrity/v1';
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CONTEXTS: Record<string, any> = {
@@ -27,5 +31,8 @@ export const CONTEXTS: Record<string, any> = {
   'https://w3id.org/security/v2': security_v2,
   'https://w3id.org/citizenship/v1': citizenship_v1,
   'https://w3id.org/security/suites/ed25519-2020/v1': ed25519_2020_v1,
+
+  'https://w3id.org/vdl/v1': vdl_v1,
+  'https://w3id.org/vdl/aamva/v1': amvaa_v1
 
 };
