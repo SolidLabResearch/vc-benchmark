@@ -145,8 +145,9 @@ async function runExperiments(
     console.log('No errors occurred!')
   }
 
-  // Export result records
-  fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(rrRecords))
+  return rrRecords
+  // // Export result records
+  // fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(rrRecords))
 
 }
 
@@ -156,15 +157,38 @@ const experimentConstructors = [
   Ed25519Signature2020Experiment,
   EcdsaSd2023CryptosuiteExperiment
 ]
-const cski = 'vc02'
-const csi = credentialSetups[cski]
-const n = 150
-console.log(
-  `Running experiments with parameters:
-    implementations:\n\t${experimentConstructors.map(c => c.name).join('\n\t')}
-    credentialSetup: ${cski}
-    n. iterations: ${n}
-  `)
+const credentialSetupKeys = [
+  'Iso18013DriversLicenseCredential-sd-002-att',
+  'Iso18013DriversLicenseCredential-sd-004-att',
+  'Iso18013DriversLicenseCredential-sd-008-att',
+  'Iso18013DriversLicenseCredential-sd-016-att'
+]
+// const cski = 'vc02'
+// const cski = 'Iso18013DriversLicenseCredential-sd-008-att'
+async function runExperimentsOnCS(
+  experimentCtrs: SubclassOfAbstractExperiment<any>[],
+  csKeys: string[],
+  n: number
+) {
+  const allRecords = []
+  for await (const cski of csKeys) {
+    const csi = credentialSetups[cski]
 
-runExperiments(experimentConstructors, csi, n)
-  .then().catch(console.error)
+    console.log(
+      `Running experiments with parameters:
+      implementations:\n\t${experimentCtrs.map(c => c.name).join('\n\t')}
+      credentialSetup: ${cski}
+      n. iterations: ${n}
+    `)
+
+
+    const rri = await runExperiments(experimentCtrs, csi, n)
+    allRecords.push(...rri)
+  }
+  // Export result records
+  fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(allRecords))
+}
+
+const nExperimentIterations = 10
+runExperimentsOnCS(experimentConstructors, credentialSetupKeys, nExperimentIterations)
+.then().catch(console.error)
