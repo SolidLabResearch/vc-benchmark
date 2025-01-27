@@ -8,7 +8,6 @@ import {performance} from "node:perf_hooks";
 import assert from "node:assert";
 import {klona} from "klona";
 import jsonld from "jsonld";
-import {logv2} from "../utils/log";
 import {MARKERS, zkpld} from "../experiment";
 import {AbstractExperiment} from "./AbstractExperiment";
 
@@ -27,12 +26,15 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
 
     const credential = readJsonFile(this.credentialSetup.credential.toString())
 
+
     const imp = new this.ctrImp(dl)
 
     // Sign VC
     this.log('>>> SIGN VC')
     let preprocessedCredential = zkpld.preprocessing.addProofObject(credential)
     zkpld.preprocessing.updateContext(preprocessedCredential)
+    this.exportObject(preprocessedCredential, 'preprocessedCredential.json')
+
     performance.mark(MARKERS.START_SIGN_VC, this.perfOptions)
     const vc = await imp.sign(preprocessedCredential, keypair)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
@@ -60,7 +62,9 @@ export class BbsTermwiseSignature2023Experiment extends AbstractExperiment {
      */
     preprocessedDisclosureDocument = await jsonld.frame(vc, preprocessedDisclosureDocument, {documentLoader: dl});
     zkpld.preprocessing.addProofObject(preprocessedDisclosureDocument)
+
     this.exportObject(preprocessedDisclosureDocument, 'preprocessedDisclosureDocument')
+    console.log('\tpreprocessed DisclosureDocument')
 
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
     const vp = await imp.derive(vc, preprocessedDisclosureDocument)

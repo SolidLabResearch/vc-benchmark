@@ -81,6 +81,11 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
     this.log('>>> DERIVE VC')
     // Preprocess disclosed document
     let preprocessedDisclosed = readJsonFile(this.credentialSetup.disclosureDocument.toString())
+
+    // Let's make sure that '@context' is an array
+    if(!Array.isArray(preprocessedDisclosed['@context'])) {
+      preprocessedDisclosed['@context'] = [preprocessedDisclosed['@context']]
+    }
     // @ts-ignore
     preprocessedDisclosed['@context'] = preprocessedDisclosed['@context'].filter((c) => (typeof c === "string") && !bbsSignature2020.contextsToExclude.includes(c))
     // Add context: bbs/v1

@@ -48,11 +48,13 @@ export class Ed25519Signature2020Experiment extends AbstractExperiment {
     // VC: preprocess
     const credential = readJsonFile(this.credentialSetup.credential.toString())
     const preprocessedCredential = _Implementation_Ed25519Signature2020.preprocessVC(credential)
+    this.exportObject(preprocessedCredential, 'preprocessedCredential.json')
 
     // Sign VC
     performance.mark(MARKERS.START_SIGN_VC, this.perfOptions)
     const vc = await imp.sign(preprocessedCredential, kp)
     performance.mark(MARKERS.END_SIGN_VC, this.perfOptions)
+    this.exportObject(vc, 'vc.json')
 
 
     console.log('>>> VERIFY VC')
