@@ -1,5 +1,50 @@
 import {DisclosureFormat, ICredentialSetup} from "./interfaces";
+import path from 'path'
+
+/**
+ * walt.id credentials
+ */
+namespace waltid {
+  export const parentDir = 'src/resources/credentials/waltid'
+  export const credentialSetups  = Object.fromEntries(
+    Object.entries(
+      {
+        'Iso18013DriversLicenseCredential-sd-002-att': {
+          key: 'Iso18013DriversLicenseCredential-sd-002-att',
+          credential: 'Iso18013DriversLicenseCredential.json',
+          disclosureDocument: 'Iso18013DriversLicenseCredential-sd-002-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        },
+        'Iso18013DriversLicenseCredential-sd-004-att': {
+          key: 'Iso18013DriversLicenseCredential-sd-004-att',
+          credential: 'Iso18013DriversLicenseCredential.json',
+          disclosureDocument: 'Iso18013DriversLicenseCredential-sd-004-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        },
+        'Iso18013DriversLicenseCredential-sd-008-att': {
+          key: 'Iso18013DriversLicenseCredential-sd-008-att',
+          credential: 'Iso18013DriversLicenseCredential.json',
+          disclosureDocument: 'Iso18013DriversLicenseCredential-sd-008-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        },
+        'Iso18013DriversLicenseCredential-sd-016-att': {
+          key: 'Iso18013DriversLicenseCredential-sd-016-att',
+          credential: 'Iso18013DriversLicenseCredential.json',
+          disclosureDocument: 'Iso18013DriversLicenseCredential-sd-016-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        }
+      }
+
+    ).map(([key, value]) => {
+      value.credential = path.resolve(waltid.parentDir, value.credential);
+      value.disclosureDocument = path.resolve(waltid.parentDir, value.disclosureDocument);
+      return [key , value];
+    })
+  )
+}
+
 const _credentialSetups = {
+  ...waltid.credentialSetups,
   'zkpld-vc0': {
     'credential': 'src/resources/zkp-ld/vc0.json',
     'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json',
