@@ -48,11 +48,22 @@ namespace jcan {
   export const credentialSetups =Object.fromEntries(
     Object.entries(
       {
-
         'jcan-20bnclaims-sd-002-att': {
           key: 'jcan-sd-002-att',
           credential: 'output/20_perBNclaims.json',
           disclosureDocument: 'jcan-20bnclaims-sd-002-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        },
+        'jcan-20bnclaims-sd-004-att': {
+          key: 'jcan-sd-004-att',
+          credential: 'output/20_perBNclaims.json',
+          disclosureDocument: 'jcan-20bnclaims-sd-004-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        },
+        'jcan-20bnclaims-sd-008-att': {
+          key: 'jcan-sd-008-att',
+          credential: 'output/20_perBNclaims.json',
+          disclosureDocument: 'jcan-20bnclaims-sd-008-att.json',
           disclosureFormat: DisclosureFormat.frame
         }
       }
