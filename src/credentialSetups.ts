@@ -43,7 +43,30 @@ namespace waltid {
   )
 }
 
+namespace jcan {
+  export const parentDir = 'src/resources/credentials/jcan'
+  export const credentialSetups =Object.fromEntries(
+    Object.entries(
+      {
+
+        'jcan-20bnclaims-sd-002-att': {
+          key: 'jcan-sd-002-att',
+          credential: 'output/20_perBNclaims.json',
+          disclosureDocument: 'jcan-20bnclaims-sd-002-att.json',
+          disclosureFormat: DisclosureFormat.frame
+        }
+      }
+
+    ).map(([key, value]) => {
+      value.credential = path.resolve(jcan.parentDir, value.credential);
+      value.disclosureDocument = path.resolve(jcan.parentDir, value.disclosureDocument);
+      return [key , value];
+    })
+  )
+}
+
 const _credentialSetups = {
+  ...jcan.credentialSetups,
   ...waltid.credentialSetups,
   'zkpld-vc0': {
     'credential': 'src/resources/zkp-ld/vc0.json',
