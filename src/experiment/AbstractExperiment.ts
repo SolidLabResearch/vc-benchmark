@@ -12,16 +12,18 @@ import {logv2} from "../utils/log";
 import {IPerformanceOptions} from "../experiment";
 import path from "node:path";
 import fs from 'fs'
+import {performance} from "node:perf_hooks";
+import {countAttributes, objVistor} from "../utils/misc";
 
 export abstract class AbstractExperiment implements IExperiment {
   credentialSetup: ICredentialSetup;
   public cryptosuite: string;
-  r: IRegistry;
+  r: IRegistry
   ctrImp: ConcreteImplementationConstructor;
   perfOptions: IPerformanceOptions;
-  credential: any
-  disclosureDocument: any
-  disclosureFormat: DisclosureFormat
+  public credential: any
+  public disclosureDocument: any
+  public disclosureFormat: DisclosureFormat
 
   constructor(credentialSetup: ICredentialSetup, cryptosuite: string, ctrImp: ConcreteImplementationConstructor) {
     this.credentialSetup = credentialSetup;
@@ -39,16 +41,47 @@ export abstract class AbstractExperiment implements IExperiment {
   }
 
 
+  /**
+   * Number of credentialSubject attributes
+   */
+  get nrCredentialSubjectAttributes() : number {
+    let nrAttributes = countAttributes(this.credential.credentialSubject)
+    return nrAttributes
+  }
+
+  /**
+   * Number of credentialSubject attributes being disclosed.
+   * NOTE: Currently, this only works when the disclosure format is a JSON-LD Frame.
+   */
+  get nrDisclosedCredentialSubjectAttributes(): number {
+    if(this.disclosureFormat != DisclosureFormat.frame)
+      throw new Error('Currently, nrDisclosedCredentialSubjectAttributes can only be computed when the disclosure format is a JSON-LD Frame.')
+
+    let nrDisclosedAttributes = 0;
+    // visitor function that counts the number of disclosed attributes (i.e., empty objects -> {})
+    const vf = (k: string, o: object) => {
+      if (typeof o === "object" && Object.keys(o).length === 0) {
+        nrDisclosedAttributes ++;
+      }
+    }
+    objVistor(this.disclosureDocument.credentialSubject, vf)
+    return nrDisclosedAttributes
+  }
+
   async run(): Promise<IRunResult> {
     performance.clearMarks();
     await this._run();
     const records = performance.getEntries();
+
+    const nrDisclosedCredentialSubjectAttributes = this.disclosureFormat === DisclosureFormat.frame ? this.nrDisclosedCredentialSubjectAttributes : undefined
     return {
       records,
       nRecords: records.length,
       cryptosuite: this.cryptosuite,
       implementationClass: this.ctrImp.name,
-      credentialSetupKey: this.credentialSetup.key
+      credentialSetupKey: this.credentialSetup.key,
+      nrCredentialSubjectAttributes: this.nrCredentialSubjectAttributes,
+      nrDisclosedCredentialSubjectAttributes
     }
   }
 

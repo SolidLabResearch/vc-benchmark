@@ -96,8 +96,6 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
 
     this.exportObject(preprocessedDisclosed, 'preprocessedDisclosureDocument')
 
-
-
     performance.mark(MARKERS.START_DERIVE, this.perfOptions)
     let dvc = await imp.deriveVC!(vc, preprocessedDisclosed,)
     performance.mark(MARKERS.END_DERIVE, this.perfOptions)
