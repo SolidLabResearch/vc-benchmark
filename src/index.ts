@@ -130,7 +130,7 @@ async function runExperiments(
           nrDisclosedAttributesInKey,
           nrDisclosedCredentialSubjectAttributes: e.nrDisclosedCredentialSubjectAttributes
         })
-        // assert(nrDisclosedAttributesInKey === e.nrDisclosedCredentialSubjectAttributes)
+        assert(nrDisclosedAttributesInKey === e.nrDisclosedCredentialSubjectAttributes)
 
         // Execute the experiment and obtain the run result records
         let rr: IRunResult = await e.run()
@@ -163,7 +163,7 @@ async function runExperiments(
 
 const experimentConstructors = [
   BbsBlsSignature2020Experiment,
-  // BbsTermwiseSignature2023Experiment,
+  BbsTermwiseSignature2023Experiment,
   // Ed25519Signature2020Experiment,
   // EcdsaSd2023CryptosuiteExperiment
 ]
@@ -173,7 +173,10 @@ const credentialSetupKeys = [
   // 'Iso18013DriversLicenseCredential-sd-004-att',
   // 'Iso18013DriversLicenseCredential-sd-008-att',
   // 'Iso18013DriversLicenseCredential-sd-016-att',
-  'jcan-20bnclaims-sd-002-att'
+  'jcan-20bnclaims-sd-002-att',
+  'jcan-20bnclaims-sd-004-att',
+  'jcan-20bnclaims-sd-008-att',
+  'jcan-20bnclaims-sd-016-att',
 
 ]
 
