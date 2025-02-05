@@ -10,6 +10,7 @@ import {BbsTermwiseSignature2023Experiment} from "./experiment/bbsTermwiseSignat
 import {BbsBlsSignature2020Experiment} from "./experiment/bbsBlsSignature2020Experiment";
 import {Ed25519Signature2020Experiment} from "./experiment/Ed25519Signature2020Experiment";
 import {EcdsaSd2023CryptosuiteExperiment} from "./experiment/EcdsaSd2023CryptosuiteExperiment";
+import assert from "node:assert";
 
 
 const implementationRunners = {
@@ -119,8 +120,20 @@ async function runExperiments(
     // For each experiment constructor (ectr)
     for await (const ectr of experimentCtrs) {
       try {
-        // Run new experiment instance and receive the run results.
-        let rr: IRunResult = await ((new ectr(credentialSetup)).run())
+        // Instantiate experiment
+        const e = new ectr(credentialSetup)
+
+        // Assert that the actual nr of disclosed attributes is correct
+        const match = credentialSetup.key.match(/\b\d{3}\b/);
+        const nrDisclosedAttributesInKey = match ? Number(match[0]) : null;
+        logv2({
+          nrDisclosedAttributesInKey,
+          nrDisclosedCredentialSubjectAttributes: e.nrDisclosedCredentialSubjectAttributes
+        })
+        // assert(nrDisclosedAttributesInKey === e.nrDisclosedCredentialSubjectAttributes)
+
+        // Execute the experiment and obtain the run result records
+        let rr: IRunResult = await e.run()
         rr.iteration = i
         rrRecords.push(rr)
       }
@@ -146,25 +159,27 @@ async function runExperiments(
   }
 
   return rrRecords
-  // // Export result records
-  // fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(rrRecords))
-
 }
 
 const experimentConstructors = [
   BbsBlsSignature2020Experiment,
-  BbsTermwiseSignature2023Experiment,
-  Ed25519Signature2020Experiment,
-  EcdsaSd2023CryptosuiteExperiment
+  // BbsTermwiseSignature2023Experiment,
+  // Ed25519Signature2020Experiment,
+  // EcdsaSd2023CryptosuiteExperiment
 ]
+
 const credentialSetupKeys = [
-  'Iso18013DriversLicenseCredential-sd-002-att',
-  'Iso18013DriversLicenseCredential-sd-004-att',
-  'Iso18013DriversLicenseCredential-sd-008-att',
-  'Iso18013DriversLicenseCredential-sd-016-att'
+  // 'Iso18013DriversLicenseCredential-sd-002-att',
+  // 'Iso18013DriversLicenseCredential-sd-004-att',
+  // 'Iso18013DriversLicenseCredential-sd-008-att',
+  // 'Iso18013DriversLicenseCredential-sd-016-att',
+  'jcan-20bnclaims-sd-002-att'
+
 ]
-// const cski = 'vc02'
-// const cski = 'Iso18013DriversLicenseCredential-sd-008-att'
+
+// const cski = 'vc02' // TODO: delete
+// const cski = 'Iso18013DriversLicenseCredential-sd-008-att' // TODO: delete
+
 async function runExperimentsOnCS(
   experimentCtrs: SubclassOfAbstractExperiment<any>[],
   csKeys: string[],
@@ -178,9 +193,10 @@ async function runExperimentsOnCS(
       `Running experiments with parameters:
       implementations:\n\t${experimentCtrs.map(c => c.name).join('\n\t')}
       credentialSetup: ${cski}
+      credential: ${csi.credential}
+      disclosureDocument: ${csi.disclosureDocument}
       n. iterations: ${n}
     `)
-
 
     const rri = await runExperiments(experimentCtrs, csi, n)
     allRecords.push(...rri)
@@ -189,6 +205,6 @@ async function runExperimentsOnCS(
   fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(allRecords))
 }
 
-const nExperimentIterations = 10
+const nExperimentIterations = 1
 runExperimentsOnCS(experimentConstructors, credentialSetupKeys, nExperimentIterations)
 .then().catch(console.error)

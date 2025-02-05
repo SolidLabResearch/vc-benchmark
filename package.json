@@ -14,7 +14,9 @@
     "pseudo:dev": "npx nodemon --exec npx ts-node ./src/pseudonymous-bbs-signature.ts",
     "impl:bbs-bls-signature-2020:dev": "npx nodemon --exec npx ts-node ./src/suite-implementations/bbs-bls-signature-2020.ts",
     "scratch": "tsx ./src/scratch.ts",
-    "scratch:dev": "npx nodemon --exec npm run scratch"
+    "scratch:dev": "npx nodemon --exec npm run scratch",
+    "scratch:jcan": "node src/resources/credentials/jcan/createCredentialFromPayload.js",
+    "scratch:jcan:dev": "npx nodemon --exec npm run scratch:jcan"
   },
   "author": "Gertjan De Mulder (gertjan.demulder@ugent.be)",
   "license": "MIT",
