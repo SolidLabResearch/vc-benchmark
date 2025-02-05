@@ -81,6 +81,8 @@ export interface IRunResult {
   implementationClass: string
   iteration?: number
   credentialSetupKey: string
+  nrCredentialSubjectAttributes: number
+  nrDisclosedCredentialSubjectAttributes?: number
 }
 
 export interface IExperiment {
