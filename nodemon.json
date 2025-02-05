@@ -1,6 +1,9 @@
 {
   "watch": ["src", "resources"],
   "ext": ".ts,.js,.json",
-  "ignore": [],
+  "ignore": [
+    "src/resources/credentials/jcan/payloads",
+    "src/resources/credentials/jcan/output"
+  ],
   "exec": "npx ts-node ./src/index.ts"
 }
