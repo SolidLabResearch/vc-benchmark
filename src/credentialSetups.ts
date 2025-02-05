@@ -65,6 +65,12 @@ namespace jcan {
           credential: 'output/20_perBNclaims.json',
           disclosureDocument: 'jcan-20bnclaims-sd-008-att.json',
           disclosureFormat: DisclosureFormat.frame
+        },
+        'jcan-20bnclaims-sd-016-att': {
+          key: 'jcan-sd-016-att',
+          credential: 'output/20_perBNclaims.json',
+          disclosureDocument: 'jcan-20bnclaims-sd-016-att.json',
+          disclosureFormat: DisclosureFormat.frame
         }
       }
 
