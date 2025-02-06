@@ -43,6 +43,9 @@ namespace waltid {
   )
 }
 
+/**
+ * TODO: JCAN setups not yet working with all crypto suites.
+ */
 namespace jcan {
   export const parentDir = 'src/resources/credentials/jcan'
   export const credentialSetups =Object.fromEntries(
