@@ -8,18 +8,9 @@ import jsigs from 'jsonld-signatures';
 import {klona} from "klona";
 import {GenerateKeyPairOptions} from "@zkp-ld/bls12381-key-pair";
 import {AbstractImplementation} from "./AbstractImplementation";
-// import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
-import {CONTEXTS} from "../contexts";
-import {credential} from "../resources/ed25519-signature-2020/mock-data";
-import {suite} from "node:test";
-/*
-import {VerifiableCredential, VerifiablePresentation} from "@digitalcredentials/vc-data-model";
-*/
-
-
-
 type VerifiableCredential = any
 type VerifiablePresentation = any
+
 export class Implementation_BbsBlsSignature2020 extends AbstractImplementation {
   async verifyDerivedCredential(dvc: any): Promise<any> {
     //Verify the derived proof
@@ -191,7 +182,6 @@ export namespace _Implementation_BbsBlsSignature2020 {
 
 
   export async function createKeypair(gkp: GenerateKeyPairOptions): Promise<Bls12381G2KeyPair> {
-
     return await Bls12381G2KeyPair.generate(gkp)
   }
 

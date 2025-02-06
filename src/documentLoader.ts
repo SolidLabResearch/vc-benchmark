@@ -8,7 +8,7 @@ interface CreateDocumentLoaderOptionsDefault {
 
 export const createDocumentLoaderOptionsDefault: CreateDocumentLoaderOptionsDefault = {
   logging: {
-    loadedContextNames: true,
+    loadedContextNames: false,
     urls: {
       present: false, // Log URLs present in contexts
       missing: true

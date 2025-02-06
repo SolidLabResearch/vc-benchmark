@@ -1,7 +1,5 @@
-import {deriveProof, sign, VCPair, verify, verifyProof} from "@zkp-ld/jsonld-proofs";
+import {deriveProof, sign, verify, verifyProof} from "@zkp-ld/jsonld-proofs";
 import {AbstractImplementation} from "./AbstractImplementation";
-import {credential} from "../resources/ed25519-signature-2020/mock-data";
-import * as vm from "node:vm";
 
 export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementation {
   deriveVC?(vc: any, disclosureDocument: any, challenge?: string): Promise<any> {
@@ -36,7 +34,6 @@ export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementat
     return await this.verifyVP(d)
   }
 
-
   async verifyVP(vp: any) {
     const publicKeys = await this.resolvePublicKeysForVP(vp)
     const verifyProofOptions = undefined
@@ -44,7 +41,6 @@ export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementat
   }
 
   async resolvePublicKeysForVP(vp: any) {
-
     let {verifiableCredential} = vp;
 
     if (!Array.isArray(verifiableCredential))
@@ -88,5 +84,4 @@ export class Implementation_BbsTermwiseSignature2023 extends AbstractImplementat
         })
     )
   }
-
 }

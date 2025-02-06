@@ -6,7 +6,6 @@ import jsigs from 'jsonld-signatures-v11-2-1';
 import {klona} from "klona";
 import * as ecdsaSd2023Cryptosuite from '@digitalbazaar/ecdsa-sd-2023-cryptosuite';
 
-
 export class Implementation_EcdsaSd2023Cryptosuite
 extends AbstractImplementation
 {
@@ -57,8 +56,7 @@ extends AbstractImplementation
     })
     return derivedCredential;
   }
-
-
+  
   async verifySignedCredential(vc: any): Promise<any> {
     const cryptosuite = ecdsaSd2023Cryptosuite.createConfirmCryptosuite()
     const suite = new DataIntegrityProof({ cryptosuite })

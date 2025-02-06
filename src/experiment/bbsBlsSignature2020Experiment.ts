@@ -1,16 +1,14 @@
-import {DisclosureFormat, ICredentialSetup, IVerificationMethod} from "../interfaces";
+import {ICredentialSetup, IVerificationMethod} from "../interfaces";
 import {
   _Implementation_BbsBlsSignature2020,
   Implementation_BbsBlsSignature2020
 } from "../suite-implementations/bbs-bls-signature-2020";
 import {createDocumentLoader, defaultContexts} from "../documentLoader";
-import {readJsonFile, writeJsonFile} from "../utils/io";
+import {readJsonFile} from "../utils/io";
 import {performance} from "node:perf_hooks";
 import assert from "node:assert";
 import {bbsSignature2020, MARKERS} from "../experiment";
 import {AbstractExperiment} from "./AbstractExperiment";
-import {getNestedAttribute, matchVariableAssignments, setNestedAttribute} from "../utils/json";
-import {logv2} from "../utils/log";
 
 export class BbsBlsSignature2020Experiment extends AbstractExperiment {
 
@@ -60,7 +58,6 @@ export class BbsBlsSignature2020Experiment extends AbstractExperiment {
 
     // Preprocess VC
     const credential = readJsonFile(this.credentialSetup.credential.toString())
-    this.log(credential, 'credential')
     let preprocessedCredential = _Implementation_BbsBlsSignature2020.preprocessVC(credential)
     preprocessedCredential['issuer'] = controller
     this.exportObject(preprocessedCredential, 'preprocessedCredential')

@@ -96,7 +96,6 @@ export namespace _Implementation_Ed25519Signature2020 {
     return out
   }
 
-
   /**
    * Existing code to check
    * - [ ] https://github.com/digitalbazaar/ed25519-signature-2020
@@ -131,5 +130,4 @@ export namespace _Implementation_Ed25519Signature2020 {
       expansionMap: false
     })
   }
-
 }
