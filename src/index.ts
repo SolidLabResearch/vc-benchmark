@@ -164,19 +164,23 @@ async function runExperiments(
 const experimentConstructors = [
   BbsBlsSignature2020Experiment,
   BbsTermwiseSignature2023Experiment,
-  // Ed25519Signature2020Experiment,
-  // EcdsaSd2023CryptosuiteExperiment
+  Ed25519Signature2020Experiment,
+  EcdsaSd2023CryptosuiteExperiment
 ]
 
 const credentialSetupKeys = [
-  // 'Iso18013DriversLicenseCredential-sd-002-att',
-  // 'Iso18013DriversLicenseCredential-sd-004-att',
-  // 'Iso18013DriversLicenseCredential-sd-008-att',
-  // 'Iso18013DriversLicenseCredential-sd-016-att',
-  'jcan-20bnclaims-sd-002-att',
-  'jcan-20bnclaims-sd-004-att',
-  'jcan-20bnclaims-sd-008-att',
-  'jcan-20bnclaims-sd-016-att',
+  'vc01-sd-002-att',
+  'vc02-sd-002-att',
+
+  'Iso18013DriversLicenseCredential-sd-002-att',
+  'Iso18013DriversLicenseCredential-sd-004-att',
+  'Iso18013DriversLicenseCredential-sd-008-att',
+  'Iso18013DriversLicenseCredential-sd-016-att',
+
+  // 'jcan-20bnclaims-sd-002-att',
+  // 'jcan-20bnclaims-sd-004-att',
+  // 'jcan-20bnclaims-sd-008-att',
+  // 'jcan-20bnclaims-sd-016-att',
 
 ]
 
@@ -208,6 +212,6 @@ async function runExperimentsOnCS(
   fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(allRecords))
 }
 
-const nExperimentIterations = 1
+const nExperimentIterations = 150
 runExperimentsOnCS(experimentConstructors, credentialSetupKeys, nExperimentIterations)
 .then().catch(console.error)
