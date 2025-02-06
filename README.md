@@ -1,4 +1,8 @@
-# benchmark
+# Benchmark
+
+- [ ] CLEANUP: package.json scripts
+
+## Usage
 
 ```bash
 npm install
@@ -9,14 +13,17 @@ Benchmark the different crypto suite implementations over N (configured in [`./s
 ```bash
 npm run start:v2:dev
 ```
-- [ ] CLEANUP: package.json scripts
 
-The experiments that need to be run are configured in [`./src/index.ts`](./src/index.ts)).
+## Configuration
+
+The experiments that need to be run are configured in [`./src/index.ts`](./src/index.ts).
 Relevant parameters are:
 
 - `experimentConstructors`: Classnames of the crypto suite experiments that will be evaluated in the experiment.
 - `credentialSetupKeys`: the keys of the credential setups that will be used for the experiment.  
 - `nExperimentIterations`: the number of iterations.
+
+## Results
 
 The performance records will be stored in [`./data`](./data).
 Note that every time you run the experiments (`npm run start:v2`),
