@@ -100,13 +100,15 @@ const _credentialSetups = {
     disclosureFormat: DisclosureFormat.frame
   },
 
-  'vc01': {
-    'credential': 'src/resources/credentials/vc01.json',
+  'vc01-sd-002-att': {
+    key: 'vc01-sd-002-att',
+    credential: 'src/resources/credentials/vc01.json',
     'disclosureDocument': 'src/resources/credentials/vc01-disclosure-document.json',
     disclosureFormat: DisclosureFormat.frame
   },
 
-  'vc02': {
+  'vc02-sd-002-att': {
+    key: 'vc02-sd-002-att',
     'credential': 'src/resources/credentials/vc02.json',
     'disclosureDocument': 'src/resources/credentials/vc02-disclosure-document.json',
     disclosureFormat: DisclosureFormat.frame,
