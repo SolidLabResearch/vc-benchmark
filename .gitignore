@@ -6,3 +6,5 @@ build
 dev.reset
 temp/
 data/records.json
+
+gddmulde/__pycache__/
