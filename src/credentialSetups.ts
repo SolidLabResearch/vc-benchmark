@@ -85,9 +85,621 @@ namespace jcan {
   )
 }
 
+namespace mock {
+  export const parentDir = 'src/resources/credentials/mock'
+  export const credentialSetups =Object.fromEntries(
+    Object.entries(
+      {
+        //// V0
+        // 'mock-vc_008-sd-002-att': {
+        //   key: 'mock-vc_008-sd-002-att',
+        //   credential: 'vc_008.json',
+        //   disclosureDocument: 'vc_008-sd-002-att.json',
+        //   disclosureFormat: DisclosureFormat.frame
+        // },
+        //
+        // 'mock-vc_008-sd-004-att': {
+        //   key: 'mock-vc_008-sd-004-att',
+        //   credential: 'vc_008.json',
+        //   disclosureDocument: 'vc_008-sd-004-att.json',
+        //   disclosureFormat: DisclosureFormat.frame
+        // },
+        //
+        // 'mock-vc_008-sd-008-att': {
+        //   key: 'mock-vc_008-sd-008-att',
+        //   credential: 'vc_008.json',
+        //   disclosureDocument: 'vc_008-sd-008-att.json',
+        //   disclosureFormat: DisclosureFormat.frame
+        // },
+
+        //// V1
+        // "mock-vc_002-sd-002-att": {
+        //   "key": "mock-vc_002-sd-002-att",
+        //   "credential": "vc_002.json",
+        //   "disclosureDocument": "vc_002-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_004-sd-002-att": {
+        //   "key": "mock-vc_004-sd-002-att",
+        //   "credential": "vc_004.json",
+        //   "disclosureDocument": "vc_004-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_004-sd-004-att": {
+        //   "key": "mock-vc_004-sd-004-att",
+        //   "credential": "vc_004.json",
+        //   "disclosureDocument": "vc_004-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_008-sd-002-att": {
+        //   "key": "mock-vc_008-sd-002-att",
+        //   "credential": "vc_008.json",
+        //   "disclosureDocument": "vc_008-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_008-sd-004-att": {
+        //   "key": "mock-vc_008-sd-004-att",
+        //   "credential": "vc_008.json",
+        //   "disclosureDocument": "vc_008-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_008-sd-008-att": {
+        //   "key": "mock-vc_008-sd-008-att",
+        //   "credential": "vc_008.json",
+        //   "disclosureDocument": "vc_008-sd-008-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_016-sd-002-att": {
+        //   "key": "mock-vc_016-sd-002-att",
+        //   "credential": "vc_016.json",
+        //   "disclosureDocument": "vc_016-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_016-sd-004-att": {
+        //   "key": "mock-vc_016-sd-004-att",
+        //   "credential": "vc_016.json",
+        //   "disclosureDocument": "vc_016-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_016-sd-008-att": {
+        //   "key": "mock-vc_016-sd-008-att",
+        //   "credential": "vc_016.json",
+        //   "disclosureDocument": "vc_016-sd-008-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_016-sd-016-att": {
+        //   "key": "mock-vc_016-sd-016-att",
+        //   "credential": "vc_016.json",
+        //   "disclosureDocument": "vc_016-sd-016-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_032-sd-002-att": {
+        //   "key": "mock-vc_032-sd-002-att",
+        //   "credential": "vc_032.json",
+        //   "disclosureDocument": "vc_032-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_032-sd-004-att": {
+        //   "key": "mock-vc_032-sd-004-att",
+        //   "credential": "vc_032.json",
+        //   "disclosureDocument": "vc_032-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_032-sd-008-att": {
+        //   "key": "mock-vc_032-sd-008-att",
+        //   "credential": "vc_032.json",
+        //   "disclosureDocument": "vc_032-sd-008-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_032-sd-016-att": {
+        //   "key": "mock-vc_032-sd-016-att",
+        //   "credential": "vc_032.json",
+        //   "disclosureDocument": "vc_032-sd-016-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_032-sd-032-att": {
+        //   "key": "mock-vc_032-sd-032-att",
+        //   "credential": "vc_032.json",
+        //   "disclosureDocument": "vc_032-sd-032-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-002-att": {
+        //   "key": "mock-vc_064-sd-002-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-004-att": {
+        //   "key": "mock-vc_064-sd-004-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-008-att": {
+        //   "key": "mock-vc_064-sd-008-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-008-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-016-att": {
+        //   "key": "mock-vc_064-sd-016-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-016-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-032-att": {
+        //   "key": "mock-vc_064-sd-032-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-032-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_064-sd-064-att": {
+        //   "key": "mock-vc_064-sd-064-att",
+        //   "credential": "vc_064.json",
+        //   "disclosureDocument": "vc_064-sd-064-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-002-att": {
+        //   "key": "mock-vc_128-sd-002-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-002-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-004-att": {
+        //   "key": "mock-vc_128-sd-004-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-004-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-008-att": {
+        //   "key": "mock-vc_128-sd-008-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-008-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-016-att": {
+        //   "key": "mock-vc_128-sd-016-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-016-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-032-att": {
+        //   "key": "mock-vc_128-sd-032-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-032-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-064-att": {
+        //   "key": "mock-vc_128-sd-064-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-064-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // },
+        // "mock-vc_128-sd-128-att": {
+        //   "key": "mock-vc_128-sd-128-att",
+        //   "credential": "vc_128.json",
+        //   "disclosureDocument": "vc_128-sd-128-att.json",
+        //   "disclosureFormat": DisclosureFormat.frame
+        // }
+
+        //// V2
+        "mock-vc_002-sd-002-att": {
+          "key": "mock-vc_002-sd-002-att",
+          "credential": "vc_002.json",
+          "disclosureDocument": "vc_002-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_004-sd-002-att": {
+          "key": "mock-vc_004-sd-002-att",
+          "credential": "vc_004.json",
+          "disclosureDocument": "vc_004-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_004-sd-004-att": {
+          "key": "mock-vc_004-sd-004-att",
+          "credential": "vc_004.json",
+          "disclosureDocument": "vc_004-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+        "mock-vc_008-sd-002-att": {
+          "key": "mock-vc_008-sd-002-att",
+          "credential": "vc_008.json",
+          "disclosureDocument": "vc_008-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_008-sd-004-att": {
+          "key": "mock-vc_008-sd-004-att",
+          "credential": "vc_008.json",
+          "disclosureDocument": "vc_008-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_008-sd-008-att": {
+          "key": "mock-vc_008-sd-008-att",
+          "credential": "vc_008.json",
+          "disclosureDocument": "vc_008-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+
+        "mock-vc_016-sd-002-att": {
+          "key": "mock-vc_016-sd-002-att",
+          "credential": "vc_016.json",
+          "disclosureDocument": "vc_016-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_016-sd-004-att": {
+          "key": "mock-vc_016-sd-004-att",
+          "credential": "vc_016.json",
+          "disclosureDocument": "vc_016-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_016-sd-008-att": {
+          "key": "mock-vc_016-sd-008-att",
+          "credential": "vc_016.json",
+          "disclosureDocument": "vc_016-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_016-sd-016-att": {
+          "key": "mock-vc_016-sd-016-att",
+          "credential": "vc_016.json",
+          "disclosureDocument": "vc_016-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+        "mock-vc_032-sd-002-att": {
+          "key": "mock-vc_032-sd-002-att",
+          "credential": "vc_032.json",
+          "disclosureDocument": "vc_032-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_032-sd-004-att": {
+          "key": "mock-vc_032-sd-004-att",
+          "credential": "vc_032.json",
+          "disclosureDocument": "vc_032-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_032-sd-008-att": {
+          "key": "mock-vc_032-sd-008-att",
+          "credential": "vc_032.json",
+          "disclosureDocument": "vc_032-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_032-sd-016-att": {
+          "key": "mock-vc_032-sd-016-att",
+          "credential": "vc_032.json",
+          "disclosureDocument": "vc_032-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_032-sd-032-att": {
+          "key": "mock-vc_032-sd-032-att",
+          "credential": "vc_032.json",
+          "disclosureDocument": "vc_032-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+        "mock-vc_064-sd-002-att": {
+          "key": "mock-vc_064-sd-002-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_064-sd-004-att": {
+          "key": "mock-vc_064-sd-004-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_064-sd-008-att": {
+          "key": "mock-vc_064-sd-008-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_064-sd-016-att": {
+          "key": "mock-vc_064-sd-016-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_064-sd-032-att": {
+          "key": "mock-vc_064-sd-032-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_064-sd-064-att": {
+          "key": "mock-vc_064-sd-064-att",
+          "credential": "vc_064.json",
+          "disclosureDocument": "vc_064-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+        "mock-vc_128-sd-002-att": {
+          "key": "mock-vc_128-sd-002-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-004-att": {
+          "key": "mock-vc_128-sd-004-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-008-att": {
+          "key": "mock-vc_128-sd-008-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-016-att": {
+          "key": "mock-vc_128-sd-016-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-032-att": {
+          "key": "mock-vc_128-sd-032-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-064-att": {
+          "key": "mock-vc_128-sd-064-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_128-sd-128-att": {
+          "key": "mock-vc_128-sd-128-att",
+          "credential": "vc_128.json",
+          "disclosureDocument": "vc_128-sd-128-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+
+        "mock-vc_256-sd-002-att": {
+          "key": "mock-vc_256-sd-002-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-004-att": {
+          "key": "mock-vc_256-sd-004-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-008-att": {
+          "key": "mock-vc_256-sd-008-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-016-att": {
+          "key": "mock-vc_256-sd-016-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-032-att": {
+          "key": "mock-vc_256-sd-032-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-064-att": {
+          "key": "mock-vc_256-sd-064-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-128-att": {
+          "key": "mock-vc_256-sd-128-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-128-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_256-sd-256-att": {
+          "key": "mock-vc_256-sd-256-att",
+          "credential": "vc_256.json",
+          "disclosureDocument": "vc_256-sd-256-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-002-att": {
+          "key": "mock-vc_512-sd-002-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-004-att": {
+          "key": "mock-vc_512-sd-004-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-008-att": {
+          "key": "mock-vc_512-sd-008-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-016-att": {
+          "key": "mock-vc_512-sd-016-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-032-att": {
+          "key": "mock-vc_512-sd-032-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-064-att": {
+          "key": "mock-vc_512-sd-064-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-128-att": {
+          "key": "mock-vc_512-sd-128-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-128-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-256-att": {
+          "key": "mock-vc_512-sd-256-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-256-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_512-sd-512-att": {
+          "key": "mock-vc_512-sd-512-att",
+          "credential": "vc_512.json",
+          "disclosureDocument": "vc_512-sd-512-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-002-att": {
+          "key": "mock-vc_1024-sd-002-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-004-att": {
+          "key": "mock-vc_1024-sd-004-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-008-att": {
+          "key": "mock-vc_1024-sd-008-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-016-att": {
+          "key": "mock-vc_1024-sd-016-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-032-att": {
+          "key": "mock-vc_1024-sd-032-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-064-att": {
+          "key": "mock-vc_1024-sd-064-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-128-att": {
+          "key": "mock-vc_1024-sd-128-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-128-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-256-att": {
+          "key": "mock-vc_1024-sd-256-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-256-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-512-att": {
+          "key": "mock-vc_1024-sd-512-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-512-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_1024-sd-1024-att": {
+          "key": "mock-vc_1024-sd-1024-att",
+          "credential": "vc_1024.json",
+          "disclosureDocument": "vc_1024-sd-1024-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-002-att": {
+          "key": "mock-vc_2048-sd-002-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-002-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-004-att": {
+          "key": "mock-vc_2048-sd-004-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-004-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-008-att": {
+          "key": "mock-vc_2048-sd-008-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-008-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-016-att": {
+          "key": "mock-vc_2048-sd-016-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-016-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-032-att": {
+          "key": "mock-vc_2048-sd-032-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-032-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-064-att": {
+          "key": "mock-vc_2048-sd-064-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-064-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-128-att": {
+          "key": "mock-vc_2048-sd-128-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-128-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-256-att": {
+          "key": "mock-vc_2048-sd-256-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-256-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-512-att": {
+          "key": "mock-vc_2048-sd-512-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-512-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-1024-att": {
+          "key": "mock-vc_2048-sd-1024-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-1024-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        },
+        "mock-vc_2048-sd-2048-att": {
+          "key": "mock-vc_2048-sd-2048-att",
+          "credential": "vc_2048.json",
+          "disclosureDocument": "vc_2048-sd-2048-att.json",
+          "disclosureFormat": DisclosureFormat.frame
+        }
+      }
+
+    ).map(([key, value]) => {
+      value.credential = path.resolve(mock.parentDir, value.credential);
+      value.disclosureDocument = path.resolve(mock.parentDir, value.disclosureDocument);
+      return [key , value];
+    })
+  )
+}
+
 const _credentialSetups = {
   ...jcan.credentialSetups,
   ...waltid.credentialSetups,
+  ...mock.credentialSetups,
   'zkpld-vc0': {
     'credential': 'src/resources/zkp-ld/vc0.json',
     'disclosureDocument': 'src/resources/zkp-ld/disclosed0.json',

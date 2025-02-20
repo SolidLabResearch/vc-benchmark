@@ -16,7 +16,9 @@
     "scratch": "tsx ./src/scratch.ts",
     "scratch:dev": "npx nodemon --exec npm run scratch",
     "scratch:jcan": "node src/resources/credentials/jcan/createCredentialFromPayload.js",
-    "scratch:jcan:dev": "npx nodemon --exec npm run scratch:jcan"
+    "scratch:jcan:dev": "npx nodemon --exec npm run scratch:jcan",
+    "generate-mock-credentials": "tsx ./src/resources/credentials/mock/generate-mock-credential-resources.ts",
+    "generate-mock-credentials:dev": "npx nodemon --exec npm run generate-mock-credentials"
   },
   "author": "Gertjan De Mulder (gertjan.demulder@ugent.be)",
   "license": "MIT",

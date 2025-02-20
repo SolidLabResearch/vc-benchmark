@@ -24,6 +24,10 @@ async function runExperiments(
   const errors = []
   const rrRecords: IRunResult[] = []
   for(let i = 0; i < n; i++) {
+    const tiStart = Date.now()
+    console.log(
+      `Experiment iteration ${i}/${n} - ${Date.now()}`
+    )
     // For each experiment constructor (ectr)
     for await (const ectr of experimentCtrs) {
       try {
@@ -31,7 +35,8 @@ async function runExperiments(
         const e = new ectr(credentialSetup)
 
         // Assert that the actual nr of disclosed attributes is correct
-        const match = credentialSetup.key.match(/\b\d{3}\b/);
+        const match = credentialSetup.key.split('sd-')[1].match(/\b\d{3}\b/);
+
         const nrDisclosedAttributesInKey = match ? Number(match[0]) : null;
         logv2({
           nrDisclosedAttributesInKey,
@@ -55,12 +60,17 @@ async function runExperiments(
         })
       }
     }
+    const tiEnd = Date.now()
+    const tiDelta = tiEnd - tiStart
+    console.log(
+      `⏱️Experiment iteration ${i}/${n} took ${tiDelta}ms`
+    )
   }
 
   // Write errors to file.
   if (errors.length > 0) {
     console.error(`A total of ${errors.length} errors occurred!`)
-    fs.writeFileSync(path.join('data', 'errors.json'), JSON.stringify(errors))
+    fs.writeFileSync(path.join( 'data', 'errors.json'), JSON.stringify(errors))
   } else {
     console.log('No errors occurred!')
   }
@@ -74,20 +84,85 @@ const experimentConstructors = [
   Ed25519Signature2020Experiment,
   EcdsaSd2023CryptosuiteExperiment
 ]
-const nExperimentIterations = 2
+const nExperimentIterations = 20
 const credentialSetupKeys = [
-  'vc01-sd-002-att',
-  'vc02-sd-002-att',
+  // 'vc01-sd-002-att',
+  // 'vc02-sd-002-att',
 
-  'Iso18013DriversLicenseCredential-sd-002-att',
-  'Iso18013DriversLicenseCredential-sd-004-att',
-  'Iso18013DriversLicenseCredential-sd-008-att',
-  'Iso18013DriversLicenseCredential-sd-016-att',
+  // 'Iso18013DriversLicenseCredential-sd-002-att',
+  // 'Iso18013DriversLicenseCredential-sd-004-att',
+  // 'Iso18013DriversLicenseCredential-sd-008-att',
+  // 'Iso18013DriversLicenseCredential-sd-016-att',
 
-  // 'jcan-20bnclaims-sd-002-att',
-  // 'jcan-20bnclaims-sd-004-att',
-  // 'jcan-20bnclaims-sd-008-att',
-  // 'jcan-20bnclaims-sd-016-att',
+  'mock-vc_002-sd-002-att',
+
+  'mock-vc_004-sd-002-att',
+  'mock-vc_004-sd-004-att',
+
+
+  // 'mock-vc_008-sd-002-att',
+  // 'mock-vc_008-sd-004-att',
+  // 'mock-vc_008-sd-008-att',
+  //
+  // 'mock-vc_016-sd-002-att',
+  // 'mock-vc_016-sd-004-att',
+  // 'mock-vc_016-sd-008-att',
+  // 'mock-vc_016-sd-016-att',
+  //
+  // 'mock-vc_032-sd-002-att',
+  // 'mock-vc_032-sd-004-att',
+  // 'mock-vc_032-sd-008-att',
+  // 'mock-vc_032-sd-016-att',
+  // 'mock-vc_032-sd-032-att',
+  //
+  // 'mock-vc_064-sd-002-att',
+  // 'mock-vc_064-sd-004-att',
+  // 'mock-vc_064-sd-008-att',
+  // 'mock-vc_064-sd-016-att',
+  // 'mock-vc_064-sd-032-att',
+  // 'mock-vc_064-sd-064-att',
+  //
+  // 'mock-vc_256-sd-002-att',
+  // 'mock-vc_256-sd-004-att',
+  // 'mock-vc_256-sd-008-att',
+  // 'mock-vc_256-sd-016-att',
+  // 'mock-vc_256-sd-032-att',
+  // 'mock-vc_256-sd-064-att',
+  // 'mock-vc_256-sd-128-att',
+  // 'mock-vc_256-sd-256-att',
+  //
+  // 'mock-vc_512-sd-002-att',
+  // 'mock-vc_512-sd-004-att',
+  // 'mock-vc_512-sd-008-att',
+  // 'mock-vc_512-sd-016-att',
+  // 'mock-vc_512-sd-032-att',
+  // 'mock-vc_512-sd-064-att',
+  // 'mock-vc_512-sd-128-att',
+  // 'mock-vc_512-sd-256-att',
+  // 'mock-vc_512-sd-512-att',
+  //
+  // 'mock-vc_1024-sd-002-att',
+  // 'mock-vc_1024-sd-004-att',
+  // 'mock-vc_1024-sd-008-att',
+  // 'mock-vc_1024-sd-016-att',
+  // 'mock-vc_1024-sd-032-att',
+  // 'mock-vc_1024-sd-064-att',
+  // 'mock-vc_1024-sd-128-att',
+  // 'mock-vc_1024-sd-256-att',
+  // 'mock-vc_1024-sd-512-att',
+  // * // 'mock-vc_1024-sd-1024-att',
+
+  // 'mock-vc_2048-sd-002-att',
+  // 'mock-vc_2048-sd-004-att',
+  // 'mock-vc_2048-sd-008-att',
+  // 'mock-vc_2048-sd-016-att',
+  // 'mock-vc_2048-sd-032-att',
+  // 'mock-vc_2048-sd-064-att',
+  // 'mock-vc_2048-sd-128-att',
+  // 'mock-vc_2048-sd-256-att',
+  // 'mock-vc_2048-sd-512-att',
+  // * // 'mock-vc_2048-sd-1024-att',
+  // * // 'mock-vc_2048-sd-2048-att'
 
 ]
 
@@ -97,11 +172,15 @@ async function runExperimentsOnCS(
   n: number
 ) {
   const allRecords = []
-  for await (const cski of csKeys) {
-    const csi = credentialSetups[cski]
+  try {
+    for await (const cski of csKeys) {
+      const csi = credentialSetups[cski]
+      console.log({cski,csi})
+      if (csi === undefined)
+        throw new Error(`Current CredentialSetup is undefined! (key: ${cski})`)
 
-    console.log(
-      `Running experiments with parameters:
+      console.log(
+        `Running experiments with parameters:
       implementations:\n\t${experimentCtrs.map(c => c.name).join('\n\t')}
       credentialSetup: ${cski}
       credential: ${csi.credential}
@@ -109,9 +188,14 @@ async function runExperimentsOnCS(
       n. iterations: ${n}
     `)
 
-    const rri = await runExperiments(experimentCtrs, csi, n)
-    allRecords.push(...rri)
+      const rri = await runExperiments(experimentCtrs, csi, n)
+
+      allRecords.push(...rri)
+    }
+  } catch (error) {
+    console.error(error)
   }
+
   // Export result records
   fs.writeFileSync(path.join('data', 'records.json'), JSON.stringify(allRecords))
 }
