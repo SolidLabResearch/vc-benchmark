@@ -1,17 +1,15 @@
 # Benchmark
 
-- [ ] CLEANUP: package.json scripts
-
 ## Usage
 
 ```bash
 npm install
 ```
 
-Benchmark the different crypto suite implementations over N (configured in [`./src/index.ts`](src/index.ts)) runs as follows:
+Benchmark the different crypto suite implementations over N (configured in [`./src/index.ts`](src/index.ts)) runs, in parallel, as follows:
 
 ```bash
-npm run start:v2:dev
+./execute-credentialSetupSubsets-parallel.sh
 ```
 
 ## Configuration
@@ -26,9 +24,8 @@ Relevant parameters are:
 ## Results
 
 The performance records will be stored in [`./data`](./data).
-Note that every time you run the experiments (`npm run start:v2`),
-the logged performance records will be written `./data/records.json`,
-which is configured to be ignored by Git (cfr., [`.gitignore`](./.gitignore)). 
-To commit the performance records resulting from a particular experiment setup (configured in )  are deemed 
+
+Since the runs are executed in parallel, the resulting performance records need to be combined into a single file. This can be done using [this data-prep Notebook](./data-prep.ipynb).
+
 
 Data analysis can be found in [this Jupyter Notebook](./data-analysis-v2-0-0.ipynb).
