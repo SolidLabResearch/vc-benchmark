@@ -80,6 +80,8 @@ export interface IRunResult {
   cryptosuite: string
   implementationClass: string
   iteration?: number
+  start?: number
+  end?: number
   credentialSetupKey: string
   nrCredentialSubjectAttributes: number
   nrDisclosedCredentialSubjectAttributes?: number

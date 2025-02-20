@@ -24,6 +24,7 @@ export abstract class AbstractExperiment implements IExperiment {
   public credential: any
   public disclosureDocument: any
   public disclosureFormat: DisclosureFormat
+  public disableExport: boolean = true
 
   constructor(credentialSetup: ICredentialSetup, cryptosuite: string, ctrImp: ConcreteImplementationConstructor) {
     this.credentialSetup = credentialSetup;
@@ -97,6 +98,8 @@ export abstract class AbstractExperiment implements IExperiment {
   }
 
   exportObject(obj: any, tag: string): any {
+    if(this.disableExport)
+      return;
     const outputDir = path.resolve('temp', 'output', this.cryptosuite)
     const fpathExport = path.resolve(outputDir, `${tag}.json`)
     this.log(fpathExport, '[EXPORT]')

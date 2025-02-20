@@ -48,6 +48,8 @@
     "jsonld-signatures": "7.0.0",
     "jsonld-signatures-v11-2-1": "npm:jsonld-signatures@^11.2.1",
     "jsonld-signatures-v9-0-0": "npm:jsonld-signatures@^9.0.0",
-    "klona": "^2.0.6"
+    "klona": "^2.0.6",
+    "lowdb": "^7.0.1",
+    "yargs": "^17.7.2"
   }
 }
